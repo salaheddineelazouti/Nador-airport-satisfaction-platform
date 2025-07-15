@@ -12,6 +12,7 @@ import CategoryEvaluation from './CategoryEvaluation';
 import FlightRadar from './FlightRadar';
 import LanguageSwitcher from './LanguageSwitcher';
 import ProgressIndicator from './ProgressIndicator';
+import LiveFlights from './LiveFlights';
 
 /**
  * Composant principal du questionnaire de satisfaction
@@ -72,13 +73,22 @@ const SatisfactionSurvey = () => {
         
       case 1:
         return (
-          <PersonalInfoForm 
-            personalInfo={personalInfo}
-            setPersonalInfo={setPersonalInfo}
-            t={t}
-            selectedLanguage={selectedLanguage}
-            onContinue={handleContinueToEvaluation}
-          />
+          <div className="space-y-8">
+            {/* Widget de vols en temps réel */}
+            <LiveFlights 
+              t={t} 
+              isRTL={isRTL} 
+            />
+            
+            {/* Formulaire d'informations personnelles */}
+            <PersonalInfoForm 
+              personalInfo={personalInfo}
+              setPersonalInfo={setPersonalInfo}
+              t={t}
+              selectedLanguage={selectedLanguage}
+              onContinue={handleContinueToEvaluation}
+            />
+          </div>
         );
         
       case 2:
