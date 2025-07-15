@@ -1,177 +1,74 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { 
-  Plane, 
-  GanttChart, 
-  UserCheck, 
-  Coffee, 
-  ShoppingBag, 
-  Wifi, 
-  HelpCircle, 
-  // UserCheck2, // Unused import
-  // ArrowLeft,  // Unused import
-  // ArrowRight, // Unused import
+import React from 'react';
+import {
+  Plane,
   CheckCircle2,
   Languages
 } from 'lucide-react';
 
-// Composants personnalisés
+import { useLanguage, useSurveyState, useProgressCalculation, useCategoriesWithIcons } from '../hooks';
 import LanguageSelector from './LanguageSelector';
 import PersonalInfoForm from './PersonalInfoForm';
 import CategoryEvaluation from './CategoryEvaluation';
 import FlightRadar from './FlightRadar';
+import LanguageSwitcher from './LanguageSwitcher';
+import ProgressIndicator from './ProgressIndicator';
 
-// Données de langue
-import { 
-  getQuestionsByLanguage, 
-  getCategoryTitles, 
-  // getFormLabels, // Unused import
-  // getPlaceholders, // Unused import
-  languages 
-} from './languageData';
-
+/**
+ * Composant principal du questionnaire de satisfaction
+ * @returns {JSX.Element} Composant SatisfactionSurvey
+ */
 const SatisfactionSurvey = () => {
-  // États pour la gestion de la langue et des étapes
-  const [selectedLanguage, setSelectedLanguage] = useState('');
-  const [currentStep, setCurrentStep] = useState(0);
+  // Utilisation des hooks personnalisés
+  const {
+    selectedLanguage,
+    texts: t,
+    categories,
+    categoryQuestions,
+    handleLanguageSelect,
+    resetLanguage,
+    isRTL
+  } = useLanguage();
   
-  // États pour les données du questionnaire
-  const [ratings, setRatings] = useState({});
-  const [comments, setComments] = useState({});
-  const [personalInfo, setPersonalInfo] = useState({
-    age: '',
-    nationality: '',
-    travelPurpose: '',
-    frequency: '',
-  });
+  const {
+    currentStep,
+    setCurrentStep,
+    submitted,
+    ratings,
+    comments,
+    personalInfo,
+    showFlightRadar,
+    setPersonalInfo,
+    handleRatingChange,
+    handleCommentChange,
+    handleContinueToEvaluation,
+    handleSubmit,
+    toggleFlightRadar,
+    resetSurvey
+  } = useSurveyState();
   
-  // États pour les fonctionnalités additionnelles
-  const [showFlightRadar, setShowFlightRadar] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+  // Utilisation du hook pour les catégories avec icônes
+  const categoriesWithIcons = useCategoriesWithIcons(categories);
   
-  // Récupérer les textes, questions et catégories selon la langue sélectionnée
-  const t = useMemo(() => languages[selectedLanguage] || languages.fr, [selectedLanguage]);
-  const categoryQuestions = useMemo(() => {
-    const categories = getCategoryTitles(selectedLanguage);
-    if (!categories) return {};
-    
-    const result = {};
-    Object.keys(categories).forEach(categoryId => {
-      result[categoryId] = getQuestionsByLanguage(categoryId, selectedLanguage);
-    });
-    return result;
-  }, [selectedLanguage]);
-  const categories = useMemo(() => getCategoryTitles(selectedLanguage), [selectedLanguage]);
+  // Calcul du progrès
+  const progress = useProgressCalculation(currentStep, submitted, ratings, categoryQuestions);
   
-  // Gérer les catégories avec icônes
-  const categoriesWithIcons = useMemo(() => {
-    if (!categories) return [];
-    
-    const icons = [
-      { icon: <Plane className="w-6 h-6" />, color: 'bg-blue-100', iconColor: 'text-blue-600' },
-      { icon: <GanttChart className="w-6 h-6" />, color: 'bg-purple-100', iconColor: 'text-purple-600' },
-      { icon: <UserCheck className="w-6 h-6" />, color: 'bg-green-100', iconColor: 'text-green-600' },
-      { icon: <Coffee className="w-6 h-6" />, color: 'bg-yellow-100', iconColor: 'text-yellow-600' },
-      { icon: <ShoppingBag className="w-6 h-6" />, color: 'bg-pink-100', iconColor: 'text-pink-600' },
-      { icon: <Wifi className="w-6 h-6" />, color: 'bg-indigo-100', iconColor: 'text-indigo-600' },
-      { icon: <HelpCircle className="w-6 h-6" />, color: 'bg-red-100', iconColor: 'text-red-600' },
-    ];
-    
-    return Object.entries(categories).map(([id, title], index) => ({
-      id,
-      title,
-      ...icons[index % icons.length]
-    }));
-  }, [categories]);
-  
-  // Calculer le progrès du questionnaire
-  const calculateProgress = () => {
-    if (currentStep === 0) return 0;
-    if (currentStep === 1) return 20;
-    if (submitted) return 100;
-    
-    const totalQuestions = Object.values(categoryQuestions).flat().length;
-    const answeredQuestions = Object.keys(ratings).length;
-    
-    const progress = Math.min(
-      95,
-      20 + Math.round((answeredQuestions / totalQuestions) * 75)
-    );
-    
-    return progress;
-  };
-  
-  // Gestionnaires d'événements
-  const handleLanguageSelect = (language) => {
-    setSelectedLanguage(language);
+  // Fonction pour gérer la sélection de langue et le changement d'étape
+  const handleLanguageSelection = (language) => {
+    handleLanguageSelect(language);
     setCurrentStep(1);
-    document.documentElement.lang = language;
-    document.body.dir = language === 'ar' ? 'rtl' : 'ltr';
   };
   
-  const handleRatingChange = (questionId, value) => {
-    setRatings(prev => ({
-      ...prev,
-      [questionId]: value
-    }));
-  };
-  
-  const handleCommentChange = (categoryId, value) => {
-    setComments(prev => ({
-      ...prev,
-      [categoryId]: value
-    }));
-  };
-  
-  const handleContinueToEvaluation = () => {
-    setCurrentStep(2);
-  };
-  
-  const handleSubmit = () => {
-    // Ici on pourrait envoyer les données à un backend
-    console.log('Submission data:', {
-      personalInfo,
-      ratings,
-      comments
-    });
-    
-    setSubmitted(true);
-    setCurrentStep(3);
-  };
-  
-  const toggleFlightRadar = () => {
-    setShowFlightRadar(prev => !prev);
-  };
-  
+  // Fonction pour recommencer le questionnaire
   const handleStartOver = () => {
-    setSubmitted(false);
-    setCurrentStep(0);
-    setSelectedLanguage('');
-    setRatings({});
-    setComments({});
-    setPersonalInfo({
-      age: '',
-      nationality: '',
-      travelPurpose: '',
-      frequency: '',
-    });
-    setShowFlightRadar(false);
-    document.body.dir = 'ltr';
-    document.documentElement.lang = 'fr';
+    resetSurvey();
+    resetLanguage();
   };
-
-  // Effet pour gérer le sens de lecture selon la langue
-  useEffect(() => {
-    if (selectedLanguage) {
-      document.documentElement.lang = selectedLanguage;
-      document.body.dir = selectedLanguage === 'ar' ? 'rtl' : 'ltr';
-    }
-  }, [selectedLanguage]);
 
   // Render conditionnel selon l'étape
   const renderStep = () => {
     switch (currentStep) {
       case 0:
-        return <LanguageSelector onLanguageSelect={handleLanguageSelect} />;
+        return <LanguageSelector onLanguageSelect={handleLanguageSelection} />;
         
       case 1:
         return (
@@ -215,7 +112,7 @@ const SatisfactionSurvey = () => {
               <button
                 onClick={handleSubmit}
                 className="bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-10 rounded-full shadow-lg transition-all transform hover:scale-105"
-                dir={selectedLanguage === 'ar' ? 'rtl' : 'ltr'}
+                dir={isRTL ? 'rtl' : 'ltr'}
               >
                 {t.submit}
               </button>
@@ -230,12 +127,12 @@ const SatisfactionSurvey = () => {
               <CheckCircle2 className="w-10 h-10 text-green-600" />
             </div>
             
-            <h2 className="text-2xl font-bold mb-4" dir={selectedLanguage === 'ar' ? 'rtl' : 'ltr'}>
+            <h2 className="text-2xl font-bold mb-4" dir={isRTL ? 'rtl' : 'ltr'}>
               {t.thankYou}
             </h2>
             
-            <p className="text-gray-600 mb-8" dir={selectedLanguage === 'ar' ? 'rtl' : 'ltr'}>
-              {t.feedbackReceived}
+            <p className="text-gray-600 mb-8" dir={isRTL ? 'rtl' : 'ltr'}>
+              {t.thankYouText}
             </p>
             
             <button
@@ -243,7 +140,7 @@ const SatisfactionSurvey = () => {
               className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center mx-auto"
             >
               <Languages className="w-5 h-5 mr-2" />
-              {t.startOver}
+              {t.newEvaluation}
             </button>
           </div>
         );
@@ -253,20 +150,23 @@ const SatisfactionSurvey = () => {
     }
   };
 
+  /**
+   * Render du composant principal
+   */
   return (
-    <div className={`min-h-screen ${selectedLanguage === 'ar' ? 'rtl-survey' : ''}`}>
+    <div className={`min-h-screen ${isRTL ? 'rtl-survey' : ''}`}>
       {/* Header avec barre de progression - affiché uniquement après la sélection de la langue */}
       {selectedLanguage && (
         <header className="bg-white shadow-md py-4 px-6 mb-6 sticky top-0 z-10">
           <div className="container mx-auto">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <Plane className={`w-6 h-6 text-blue-600 ${selectedLanguage === 'ar' ? 'ml-3' : 'mr-3'}`} />
+                <Plane className={`w-6 h-6 text-blue-600 ${isRTL ? 'ml-3' : 'mr-3'}`} />
                 <div>
-                  <h1 className="font-bold text-lg text-gray-800" dir={selectedLanguage === 'ar' ? 'rtl' : 'ltr'}>
+                  <h1 className="font-bold text-lg text-gray-800" dir={isRTL ? 'rtl' : 'ltr'}>
                     {t.title}
                   </h1>
-                  <p className="text-sm text-gray-500" dir={selectedLanguage === 'ar' ? 'rtl' : 'ltr'}>
+                  <p className="text-sm text-gray-500" dir={isRTL ? 'rtl' : 'ltr'}>
                     {t.subtitle}
                   </p>
                 </div>
@@ -274,34 +174,13 @@ const SatisfactionSurvey = () => {
               
               <div className="flex items-center space-x-4">
                 {/* Sélecteur de langue */}
-                <div className="flex space-x-2">
-                  {Object.entries(languages).map(([code, lang]) => (
-                    <button
-                      key={code}
-                      onClick={() => setSelectedLanguage(code)}
-                      className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                        selectedLanguage === code 
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-gray-100 hover:bg-gray-200 text-gray-800'
-                      }`}
-                    >
-                      <span>{lang.flag}</span>
-                    </button>
-                  ))}
-                </div>
+                <LanguageSwitcher 
+                  selectedLanguage={selectedLanguage} 
+                  onLanguageSelect={handleLanguageSelect} 
+                />
                 
                 {/* Affichage du progrès */}
-                {!submitted && (
-                  <div className="flex items-center space-x-2">
-                    <div className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-blue-600 transition-all duration-500"
-                        style={{ width: `${calculateProgress()}%` }}
-                      />
-                    </div>
-                    <span className="text-sm text-gray-600 font-medium">{calculateProgress()}%</span>
-                  </div>
-                )}
+                {!submitted && <ProgressIndicator progress={progress} />}
               </div>
             </div>
           </div>
@@ -317,8 +196,8 @@ const SatisfactionSurvey = () => {
       {selectedLanguage && (
         <footer className="bg-gray-100 py-6">
           <div className="container mx-auto px-4 text-center text-gray-500 text-sm">
-            <p dir={selectedLanguage === 'ar' ? 'rtl' : 'ltr'}>
-              {t.footer} &copy; 2023 {t.airportName}
+            <p dir={isRTL ? 'rtl' : 'ltr'}>
+              &copy; 2025 {t.title}
             </p>
           </div>
         </footer>
