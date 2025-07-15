@@ -79,6 +79,7 @@ const LiveFlights = ({ t, isRTL }) => {
       : ['Departed', 'On Time', 'Delayed', 'Boarding', 'Check-in'];
     
     return Array(count).fill().map((_, i) => ({
+      id: `mock-${type}-${i}`,
       flight: {
         airline: airlines[Math.floor(Math.random() * airlines.length)],
         number: flightNumbers[Math.floor(Math.random() * flightNumbers.length)]
@@ -165,27 +166,27 @@ const LiveFlights = ({ t, isRTL }) => {
                 className={`hover:bg-blue-50 transition-colors ${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}`}
               >
                 <td className="px-3 py-2 whitespace-nowrap text-sm">
-                  {activeTab === 'arrivals' ? flight.airport.origin : flight.airport.destination}
+                  {flight && flight.airport && (activeTab === 'arrivals' ? flight.airport.origin : flight.airport.destination)}
                 </td>
                 <td className="px-3 py-2 whitespace-nowrap text-sm">
                   <div className="flex items-center">
                     <Plane className="h-4 w-4 text-blue-600 mr-1" />
-                    {flight.flight.number}
+                    {flight && flight.flight ? flight.flight.number : '-'}
                   </div>
                 </td>
                 <td className="px-3 py-2 whitespace-nowrap text-sm">
                   <div className="flex items-center">
                     <Clock className="h-4 w-4 text-gray-500 mr-1" />
-                    {flight.time.scheduled}
+                    {flight && flight.time ? flight.time.scheduled : '--:--'}
                   </div>
                 </td>
                 <td className="px-3 py-2 whitespace-nowrap">
                   <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                    ${flight.status === 'On Time' ? 'bg-green-100 text-green-800' : 
-                    flight.status === 'Delayed' ? 'bg-red-100 text-red-800' : 
+                    ${flight && flight.status === 'On Time' ? 'bg-green-100 text-green-800' : 
+                    flight && flight.status === 'Delayed' ? 'bg-red-100 text-red-800' : 
                     'bg-blue-100 text-blue-800'}`}
                   >
-                    {formatStatus(flight.status)}
+                    {formatStatus(flight ? flight.status : 'Unknown')}
                   </span>
                 </td>
               </tr>
