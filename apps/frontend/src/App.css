@@ -1,0 +1,24 @@
+.App {
+  text-align: center;
+  min-height: 100vh;
+}
+
+/* Pour gérer le sens de lecture en arabe */
+[dir="rtl"] {
+  text-align: right;
+}
+
+/* Personnalisation des étoiles */
+.star-rating button:focus {
+  outline: none;
+}
+
+/* Animation pour les transitions */
+.fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

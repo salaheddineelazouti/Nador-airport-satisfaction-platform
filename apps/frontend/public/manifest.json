@@ -1,0 +1,14 @@
+{
+  "short_name": "Nador Airport Survey",
+  "name": "Enquête de Satisfaction - Aéroport Al Aroui Nador",
+  "icons": [
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#0072ff",
+  "background_color": "#ffffff",
+  "dir": "auto",
+  "lang": "fr",
+  "orientation": "portrait",
+  "categories": ["travel", "survey", "airport"]
+}
