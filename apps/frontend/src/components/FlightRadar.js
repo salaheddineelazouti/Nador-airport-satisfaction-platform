@@ -1,5 +1,6 @@
 import React from 'react';
 import { Navigation } from 'lucide-react';
+import ondaLogo from '../assets/images/Logo office national des aeroports.png';
 
 const FlightRadar = ({ showFlightRadar, toggleFlightRadar, t, selectedLanguage }) => {
   return (
