@@ -41,16 +41,47 @@ export const useSurveyState = () => {
     setCurrentStep(2);
   };
   
-  const handleSubmit = () => {
-    // Ici on pourrait envoyer les données à un backend
-    console.log('Submission data:', {
-      personalInfo,
-      ratings,
-      comments
-    });
-    
-    setSubmitted(true);
-    setCurrentStep(3);
+  const handleSubmit = async () => {
+    try {
+      // Préparation des données pour l'API
+      const surveyData = {
+        language: 'fr', // À récupérer du contexte de langue
+        personalInfo: {
+          age: personalInfo.age,
+          nationality: personalInfo.nationality,
+          travelPurpose: personalInfo.travelPurpose,
+          frequency: personalInfo.frequency
+        },
+        ratings,
+        comments
+      };
+
+      // Envoi vers l'API backend
+      const response = await fetch('http://localhost:5000/api/surveys', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(surveyData)
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        console.log('Enquête soumise avec succès:', result.data);
+        setSubmitted(true);
+        setCurrentStep(3);
+        
+        // Optionnel: stocker l'ID de session pour référence
+        localStorage.setItem('surveySessionId', result.data.sessionId);
+      } else {
+        throw new Error(result.message || 'Erreur lors de la soumission');
+      }
+    } catch (error) {
+      console.error('Erreur lors de la soumission:', error);
+      // Gestion d'erreur - afficher un message à l'utilisateur
+      alert('Erreur lors de la soumission de l\'enquête. Veuillez réessayer.');
+    }
   };
   
   const toggleFlightRadar = () => {
