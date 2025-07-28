@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Plane,
+  // Plane, // Unused
   CheckCircle2,
   Languages
 } from 'lucide-react';

@@ -62,13 +62,31 @@ const specs = swaggerJsdoc(swaggerOptions);
 
 // Middlewares de sécurité
 app.use(helmet());
+// 🌐 CORS dynamique pour IPs réseau changeantes
 app.use(cors({
-  origin: [
-    'http://localhost:3000',
-    'http://127.0.0.1:3000',
-    'http://192.168.1.84:3000',
-    process.env.FRONTEND_URL
-  ].filter(Boolean),
+  origin: (origin, callback) => {
+    // Autoriser les requêtes sans origin (ex: Postman, apps mobiles)
+    if (!origin) return callback(null, true);
+    
+    // Patterns autorisés
+    const allowedPatterns = [
+      /^https?:\/\/localhost:3000$/,
+      /^https?:\/\/127\.0\.0\.1:3000$/,
+      /^https?:\/\/192\.168\.[0-9]{1,3}\.[0-9]{1,3}:3000$/, // Réseau local 192.168.x.x
+      /^https?:\/\/10\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}:3000$/, // Réseau local 10.x.x.x
+      /^https?:\/\/172\.(1[6-9]|2[0-9]|3[0-1])\.[0-9]{1,3}\.[0-9]{1,3}:3000$/ // Réseau local 172.16-31.x.x
+    ];
+    
+    // Vérifier si l'origin correspond à un pattern autorisé
+    const isAllowed = allowedPatterns.some(pattern => pattern.test(origin));
+    
+    if (isAllowed) {
+      callback(null, true);
+    } else {
+      console.log('🚫 Origin bloquée:', origin);
+      callback(new Error('Non autorisé par CORS'));
+    }
+  },
   credentials: true
 }));
 

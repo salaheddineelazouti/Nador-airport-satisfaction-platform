@@ -1,7 +1,28 @@
-// Configuration de l'API
+// 🌐 Configuration dynamique de l'API
+const getApiBaseUrl = () => {
+  // Si variable d'environnement définie, l'utiliser
+  if (process.env.REACT_APP_API_URL) {
+    return process.env.REACT_APP_API_URL;
+  }
+  
+  // Sinon, détecter automatiquement basé sur l'hostname actuel
+  const hostname = window.location.hostname;
+  const protocol = window.location.protocol;
+  
+  // Si on est sur une IP réseau, utiliser la même IP pour l'API
+  if (hostname !== 'localhost' && hostname !== '127.0.0.1') {
+    return `${protocol}//${hostname}:5000`;
+  }
+  
+  // Fallback localhost
+  return 'http://localhost:5000';
+};
+
 const API_CONFIG = {
-  // URL de base de l'API backend
-  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5000',
+  // URL de base de l'API backend - DYNAMIQUE 🚀
+  get baseURL() {
+    return getApiBaseUrl();
+  },
   
   // Endpoints
   endpoints: {
