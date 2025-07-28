@@ -8,8 +8,7 @@ module.exports = (sequelize, DataTypes) => {
     session_id: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true,
-      comment: 'Identifiant unique de session pour éviter les doublons'
+      unique: true
     },
     language: {
       type: DataTypes.ENUM('fr', 'ar', 'en'),
@@ -21,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
       validate: {
-        isIn: [['18-25', '26-35', '36-45', '46-55', '56-65', '65+']]
+        isIn: [['18-25', '26-35', '36-50', '51-65', '65+']]
       }
     },
     nationality: {
@@ -35,28 +34,26 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
       validate: {
-        isIn: [['business', 'leisure', 'transit', 'other']]
+        isIn: [['business', 'leisure', 'transit', 'other', 'tourisme', 'affaires', 'famille', 'autre']]
       }
     },
     frequency: {
       type: DataTypes.STRING,
       allowNull: true,
       validate: {
-        isIn: [['first-time', 'occasional', 'regular', 'frequent']]
+        isIn: [['first-time', 'occasional', 'regular', 'frequent', 'premiere', 'occasionnel', 'regulier']]
       }
     },
     // Évaluations par catégorie
     ratings: {
       type: DataTypes.JSONB,
       allowNull: false,
-      defaultValue: {},
-      comment: 'Notations par catégorie (1-5 étoiles)'
+      defaultValue: {}
     },
     comments: {
       type: DataTypes.JSONB,
       allowNull: true,
-      defaultValue: {},
-      comment: 'Commentaires par catégorie'
+      defaultValue: {}
     },
     // Métadonnées
     ip_address: {
@@ -69,8 +66,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     completion_time: {
       type: DataTypes.INTEGER,
-      allowNull: true,
-      comment: 'Temps de completion en secondes'
+      allowNull: true
     },
     is_complete: {
       type: DataTypes.BOOLEAN,

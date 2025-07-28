@@ -4,17 +4,27 @@ const rateLimit = require('express-rate-limit');
 const { Survey } = require('../models');
 const { generateSessionId } = require('../utils/helpers');
 const logger = require('../utils/logger');
+const {
+  validateSecurityConstraints,
+  bruteForceProtection,
+  duplicateProtection,
+  validateBusinessLogic,
+  collectSecurityMetrics
+} = require('../middleware/securityValidator');
+const securityMonitor = require('../utils/securityMonitor');
 
 const router = express.Router();
 
 // Rate limiting spécifique aux enquêtes
 const surveyLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 heure
-  max: 3, // Maximum 3 enquêtes par heure par IP
+  windowMs: process.env.NODE_ENV === 'development' ? 5 * 60 * 1000 : 60 * 60 * 1000, // 5 min en dev, 1h en prod
+  max: process.env.NODE_ENV === 'development' ? 50 : 3, // 50 en dev, 3 en prod
   message: {
     success: false,
     message: 'Limite d\'enquêtes atteinte. Veuillez réessayer plus tard.'
-  }
+  },
+  standardHeaders: true,
+  legacyHeaders: false
 });
 
 /**
@@ -68,8 +78,15 @@ const surveyLimiter = rateLimit({
  *         description: Limite de soumission atteinte
  */
 router.post('/', 
-  surveyLimiter,
+  // 🛡️ COUCHES DE SÉCURITÉ SUPPLÉMENTAIRES
+  collectSecurityMetrics,    // Collecte des métriques
+  bruteForceProtection,      // Protection contre la force brute
+  duplicateProtection,       // Protection contre la duplication
+  surveyLimiter,             // Rate limiting existant
+  validateSecurityConstraints, // Validation de sécurité avancée
+  validateBusinessLogic,     // Validation de cohérence business
   [
+    // 📋 VALIDATIONS EXPRESS-VALIDATOR EXISTANTES
     body('language')
       .isIn(['fr', 'ar', 'en'])
       .withMessage('Langue non supportée'),
@@ -78,15 +95,41 @@ router.post('/',
       .withMessage('Les évaluations doivent être un objet')
       .custom((ratings) => {
         const validCategories = [
+          // Catégories originales (compatibilité)
           'accueil', 'securite', 'confort', 'services',
-          'restauration', 'boutiques', 'proprete', 'signalisation'
+          'restauration', 'boutiques', 'proprete', 'signalisation',
+          
+          // === SYNC COMPLET AVEC FRONTEND ===
+          // Accès terminal (6 questions: 0-5)
+          'acces_terminal_0', 'acces_terminal_1', 'acces_terminal_2',
+          'acces_terminal_3', 'acces_terminal_4', 'acces_terminal_5',
+          
+          // Enregistrement et contrôles (9 questions: 0-8)
+          'enregistrement_controles_0', 'enregistrement_controles_1', 'enregistrement_controles_2',
+          'enregistrement_controles_3', 'enregistrement_controles_4', 'enregistrement_controles_5',
+          'enregistrement_controles_6', 'enregistrement_controles_7', 'enregistrement_controles_8',
+          
+          // Zones d'attente (4 questions: 0-3)
+          'zones_attente_0', 'zones_attente_1', 'zones_attente_2', 'zones_attente_3',
+          
+          // Services et commodités (6 questions: 0-5)
+          'services_commodites_0', 'services_commodites_1', 'services_commodites_2',
+          'services_commodites_3', 'services_commodites_4', 'services_commodites_5',
+          
+          // Hygiène et infrastructure (4 questions: 0-3)
+          'hygiene_infrastructure_0', 'hygiene_infrastructure_1',
+          'hygiene_infrastructure_2', 'hygiene_infrastructure_3',
+          
+          // Personnel et service (2 questions: 0-1)
+          'personnel_service_0', 'personnel_service_1'
         ];
         
         for (const [category, rating] of Object.entries(ratings)) {
           if (!validCategories.includes(category)) {
             throw new Error(`Catégorie invalide: ${category}`);
           }
-          if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
+          const numRating = Number(rating);
+          if (!Number.isInteger(numRating) || numRating < 1 || numRating > 5) {
             throw new Error(`Note invalide pour ${category}: doit être entre 1 et 5`);
           }
         }
@@ -98,22 +141,35 @@ router.post('/',
       .withMessage('Les commentaires doivent être un objet'),
     body('personalInfo.age')
       .optional()
-      .isIn(['18-25', '26-35', '36-45', '46-55', '56-65', '65+'])
+      .isIn(['18-25', '26-35', '36-50', '51-65', '65+'])
       .withMessage('Tranche d\'âge invalide'),
     body('personalInfo.travelPurpose')
       .optional()
-      .isIn(['business', 'leisure', 'transit', 'other'])
+      .isIn(['business', 'leisure', 'transit', 'other', 'tourisme', 'affaires', 'famille', 'autre'])
       .withMessage('Motif de voyage invalide'),
     body('personalInfo.frequency')
       .optional()
-      .isIn(['first-time', 'occasional', 'regular', 'frequent'])
+      .isIn(['first-time', 'occasional', 'regular', 'frequent', 'premiere', 'occasionnel', 'regulier'])
       .withMessage('Fréquence de voyage invalide')
   ],
   async (req, res) => {
     try {
-      // Vérification des erreurs de validation
+      // Debug: Log des données reçues
+      console.log('📛 Données reçues:', JSON.stringify(req.body, null, 2));
+      console.log('🗺 URL demandée:', req.url);
+      
+      // 🔍 VÉRIFICATION DES ERREURS DE VALIDATION
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
+        console.log('❌ Erreurs de validation:', errors.array());
+        
+        // 📊 Enregistrer l'erreur dans le monitoring
+        securityMonitor.recordValidationError(req.ip, 'VALIDATION_FAILED', {
+          errors: errors.array(),
+          userAgent: req.get('User-Agent'),
+          body: req.body
+        });
+        
         return res.status(400).json({
           success: false,
           message: 'Données invalides',
@@ -129,8 +185,8 @@ router.post('/',
       // Calcul du temps de completion (simulé pour le moment)
       const completionTime = Math.floor(Math.random() * 300) + 60; // 1-5 minutes
 
-      // Création de l'enquête
-      const survey = await Survey.create({
+      // Préparation des données pour la création
+      const surveyData = {
         session_id: sessionId,
         language,
         age_range: personalInfo.age,
@@ -143,13 +199,28 @@ router.post('/',
         user_agent: req.get('User-Agent'),
         completion_time: completionTime,
         is_complete: true
-      });
+      };
+      
+      console.log('🔄 Tentative de création de l\'enquête avec les données:', JSON.stringify(surveyData, null, 2));
+      
+      // Création de l'enquête
+      const survey = await Survey.create(surveyData);
 
       logger.info('Nouvelle enquête soumise', {
         surveyId: survey.id,
         language: survey.language,
         ip: req.ip,
         ratingsCount: Object.keys(ratings).length
+      });
+      
+      // 📊 Enregistrer la soumission réussie dans le monitoring
+      securityMonitor.recordSubmission(req.ip, {
+        surveyId: survey.id,
+        language: survey.language,
+        ratingsCount: Object.keys(ratings).length,
+        hasPersonalInfo: Object.keys(personalInfo).some(key => personalInfo[key]),
+        userAgent: req.get('User-Agent'),
+        securityMetadata: req.securityMetadata
       });
 
       res.status(201).json({
@@ -163,6 +234,12 @@ router.post('/',
       });
 
     } catch (error) {
+      console.log('💥 ERREUR DÉTAILLÉE:', {
+        name: error.name,
+        message: error.message,
+        stack: error.stack,
+        sql: error.sql || 'N/A'
+      });
       logger.error('Erreur lors de la soumission de l\'enquête', error);
       
       if (error.name === 'SequelizeUniqueConstraintError') {
@@ -284,6 +361,41 @@ router.get('/:sessionId', async (req, res) => {
 
   } catch (error) {
     logger.error('Erreur lors de la récupération de l\'enquête', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur interne du serveur'
+    });
+  }
+});
+
+/**
+ * @swagger
+ * /api/surveys/security/metrics:
+ *   get:
+ *     summary: Obtenir les métriques de sécurité (admin seulement)
+ *     tags: [Surveys]
+ *     responses:
+ *       200:
+ *         description: Métriques récupérées avec succès
+ */
+router.get('/security/metrics', async (req, res) => {
+  try {
+    // TODO: Ajouter une authentification admin ici
+    
+    const metrics = securityMonitor.getMetrics();
+    const patterns = await securityMonitor.analyzeSubmissionPatterns();
+    
+    res.json({
+      success: true,
+      data: {
+        metrics,
+        suspiciousPatterns: patterns,
+        timestamp: new Date().toISOString()
+      }
+    });
+    
+  } catch (error) {
+    logger.error('Erreur lors de la récupération des métriques de sécurité', error);
     res.status(500).json({
       success: false,
       message: 'Erreur interne du serveur'

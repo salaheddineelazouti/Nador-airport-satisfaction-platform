@@ -63,7 +63,12 @@ const specs = swaggerJsdoc(swaggerOptions);
 // Middlewares de sécurité
 app.use(helmet());
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: [
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+    'http://192.168.1.84:3000',
+    process.env.FRONTEND_URL
+  ].filter(Boolean),
   credentials: true
 }));
 
@@ -91,6 +96,38 @@ app.use('/api/surveys', surveyRoutes);
 app.use('/api/flights', flightRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/admin', adminRoutes);
+
+// Route racine - GET
+app.get('/', (req, res) => {
+  res.json({
+    message: 'Nador Airport Satisfaction API',
+    version: '1.0.0',
+    endpoints: {
+      surveys: '/api/surveys',
+      flights: '/api/flights',
+      analytics: '/api/analytics',
+      health: '/health',
+      docs: '/api-docs'
+    }
+  });
+});
+
+// Route racine - POST (pour déboguer les requêtes mal dirigées)
+app.post('/', (req, res) => {
+  console.log(' ALERTE: Requête POST reçue sur la route racine /');
+  console.log(' Headers:', req.headers);
+  console.log(' Body:', req.body);
+  console.log(' URL originale:', req.originalUrl);
+  console.log(' URL:', req.url);
+  
+  res.status(400).json({
+    error: 'Requête mal dirigée',
+    message: 'Cette requête devrait être envoyée vers /api/surveys',
+    correctEndpoint: '/api/surveys',
+    receivedUrl: req.url,
+    method: req.method
+  });
+});
 
 // Route de santé
 app.get('/health', (req, res) => {

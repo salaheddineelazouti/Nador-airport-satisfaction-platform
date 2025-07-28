@@ -46,7 +46,7 @@ const SatisfactionSurvey = () => {
     handleSubmit,
     toggleFlightRadar,
     resetSurvey
-  } = useSurveyState();
+  } = useSurveyState(selectedLanguage);
   
   // Utilisation du hook pour les catégories avec icônes
   const categoriesWithIcons = useCategoriesWithIcons(categories);
