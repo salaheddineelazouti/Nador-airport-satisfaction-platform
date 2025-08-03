@@ -164,3 +164,17 @@
 {"level":"info","message":"Modèles synchronisés avec la base de données.","timestamp":"2025-07-28T04:57:43.869Z"}
 {"level":"info","message":"Serveur démarré sur le port 5000","timestamp":"2025-07-28T04:57:43.874Z"}
 {"level":"info","message":"Documentation API disponible sur http://localhost:5000/api-docs","timestamp":"2025-07-28T04:57:43.875Z"}
+{"level":"info","message":"Connexion à la base de données établie avec succès.","timestamp":"2025-08-03T18:12:31.065Z"}
+{"level":"info","message":"Modèles synchronisés avec la base de données.","timestamp":"2025-08-03T18:12:31.782Z"}
+{"level":"info","message":"Serveur démarré sur le port 5000","timestamp":"2025-08-03T18:12:31.788Z"}
+{"level":"info","message":"Documentation API disponible sur http://localhost:5000/api-docs","timestamp":"2025-08-03T18:12:31.788Z"}
+{"level":"info","message":"Connexion à la base de données établie avec succès.","timestamp":"2025-08-03T18:57:25.487Z"}
+{"level":"info","message":"Modèles synchronisés avec la base de données.","timestamp":"2025-08-03T18:57:26.248Z"}
+{"level":"info","message":"Connexion à la base de données établie avec succès.","timestamp":"2025-08-03T18:58:46.388Z"}
+{"level":"info","message":"Modèles synchronisés avec la base de données.","timestamp":"2025-08-03T18:58:46.979Z"}
+{"level":"info","message":"Serveur démarré sur le port 5000","timestamp":"2025-08-03T18:58:46.984Z"}
+{"level":"info","message":"Documentation API disponible sur http://localhost:5000/api-docs","timestamp":"2025-08-03T18:58:46.984Z"}
+{"level":"info","message":"Connexion à la base de données établie avec succès.","timestamp":"2025-08-03T19:01:14.446Z"}
+{"level":"info","message":"Modèles synchronisés avec la base de données.","timestamp":"2025-08-03T19:01:14.926Z"}
+{"level":"info","message":"Serveur démarré sur le port 5000","timestamp":"2025-08-03T19:01:14.930Z"}
+{"level":"info","message":"Documentation API disponible sur http://localhost:5000/api-docs","timestamp":"2025-08-03T19:01:14.930Z"}

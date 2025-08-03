@@ -1,6 +1,7 @@
 const express = require('express');
 const { body, validationResult } = require('express-validator');
 const rateLimit = require('express-rate-limit');
+const { Op } = require('sequelize');
 const { Survey } = require('../models');
 const { generateSessionId } = require('../utils/helpers');
 const logger = require('../utils/logger');
@@ -256,6 +257,198 @@ router.post('/',
     }
   }
 );
+
+/**
+ * @swagger
+ * /api/surveys:
+ *   get:
+ *     summary: Obtenir la liste des enquêtes avec pagination et filtres
+ *     tags: [Surveys] 
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *       - in: query
+ *         name: language
+ *         schema:
+ *           type: string
+ *           enum: [fr, ar, en]
+ *       - in: query
+ *         name: dateFrom
+ *         schema:
+ *           type: string
+ *           format: date
+ *       - in: query
+ *         name: dateTo
+ *         schema:
+ *           type: string
+ *           format: date
+ *       - in: query
+ *         name: minRating
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           maximum: 5
+ *       - in: query
+ *         name: maxRating
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           maximum: 5
+ *     responses:
+ *       200:
+ *         description: Liste des enquêtes récupérée avec succès
+ */
+router.get('/', async (req, res) => {
+  try {
+    const {
+      page = 1,
+      limit = 10,
+      language,
+      dateFrom,
+      dateTo,
+      minRating,
+      maxRating
+    } = req.query;
+
+    const pageNum = Math.max(1, parseInt(page));
+    const limitNum = Math.min(100, Math.max(1, parseInt(limit)));
+    const offset = (pageNum - 1) * limitNum;
+
+    // Construction des conditions de filtrage
+    const where = { is_complete: true };
+    
+    if (language) {
+      where.language = language;
+    }
+    
+    if (dateFrom || dateTo) {
+      where.submitted_at = {};
+      if (dateFrom) {
+        where.submitted_at[Op.gte] = new Date(dateFrom);
+      }
+      if (dateTo) {
+        where.submitted_at[Op.lte] = new Date(dateTo + 'T23:59:59');
+      }
+    }
+
+    // Pour le filtrage par rating, on doit calculer la moyenne
+    let havingClause = null;
+    if (minRating || maxRating) {
+      const ratingConditions = [];
+      if (minRating) {
+        ratingConditions.push(`avg_rating >= ${parseFloat(minRating)}`);
+      }
+      if (maxRating) {
+        ratingConditions.push(`avg_rating <= ${parseFloat(maxRating)}`);
+      }
+      havingClause = ratingConditions.join(' AND ');
+    }
+
+    // Requête principale avec calcul de la moyenne des ratings
+    const surveysQuery = `
+      SELECT 
+        id,
+        session_id,
+        language,
+        age_range,
+        nationality,
+        travel_purpose,
+        frequency,
+        ratings,
+        comments,
+        submitted_at,
+        (
+          SELECT AVG(value::float)
+          FROM jsonb_each_text(ratings) 
+          WHERE value ~ '^[0-9]+(\\.[0-9]+)?$'
+        ) as avg_rating
+      FROM surveys 
+      WHERE is_complete = true
+        ${language ? `AND language = '${language}'` : ''}
+        ${dateFrom ? `AND submitted_at >= '${dateFrom}'` : ''}
+        ${dateTo ? `AND submitted_at <= '${dateTo} 23:59:59'` : ''}
+      ${havingClause ? `HAVING (
+        SELECT AVG(value::float)
+        FROM jsonb_each_text(ratings) 
+        WHERE value ~ '^[0-9]+(\\.[0-9]+)?$'
+      ) ${havingClause.replace('avg_rating', '')}` : ''}
+      ORDER BY submitted_at DESC
+      LIMIT ${limitNum} OFFSET ${offset}
+    `;
+
+    const countQuery = `
+      SELECT COUNT(*) as total
+      FROM (
+        SELECT 
+          id,
+          (
+            SELECT AVG(value::float)
+            FROM jsonb_each_text(ratings) 
+            WHERE value ~ '^[0-9]+(\\.[0-9]+)?$'
+          ) as avg_rating
+        FROM surveys 
+        WHERE is_complete = true
+          ${language ? `AND language = '${language}'` : ''}
+          ${dateFrom ? `AND submitted_at >= '${dateFrom}'` : ''}
+          ${dateTo ? `AND submitted_at <= '${dateTo} 23:59:59'` : ''}
+        ${havingClause ? `HAVING (
+          SELECT AVG(value::float)
+          FROM jsonb_each_text(ratings) 
+          WHERE value ~ '^[0-9]+(\\.[0-9]+)?$'
+        ) ${havingClause.replace('avg_rating', '')}` : ''}
+      ) as filtered_surveys
+    `;
+
+    const [surveys, countResult] = await Promise.all([
+      Survey.sequelize.query(surveysQuery, {
+        type: Survey.sequelize.QueryTypes.SELECT
+      }),
+      Survey.sequelize.query(countQuery, {
+        type: Survey.sequelize.QueryTypes.SELECT
+      })
+    ]);
+
+    const total = parseInt(countResult[0]?.total || 0);
+    const totalPages = Math.ceil(total / limitNum);
+
+    res.json({
+      success: true,
+      data: {
+        surveys,
+        pagination: {
+          currentPage: pageNum,
+          totalPages,
+          totalItems: total,
+          itemsPerPage: limitNum,
+          hasNextPage: pageNum < totalPages,
+          hasPrevPage: pageNum > 1
+        },
+        filters: {
+          language,
+          dateFrom,
+          dateTo,
+          minRating,
+          maxRating
+        }
+      }
+    });
+
+  } catch (error) {
+    logger.error('Erreur lors de la récupération des enquêtes:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur interne du serveur'
+    });
+  }
+});
 
 /**
  * @swagger

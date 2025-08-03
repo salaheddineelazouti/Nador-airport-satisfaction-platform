@@ -1,5 +1,6 @@
 const express = require('express');
 const { Survey } = require('../models');
+const { Op } = require('sequelize');
 const logger = require('../utils/logger');
 
 const router = express.Router();
@@ -71,7 +72,7 @@ router.get('/dashboard', async (req, res) => {
       where: {
         is_complete: true,
         submitted_at: {
-          [Survey.sequelize.Op.gte]: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+          [Op.gte]: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
         }
       },
       group: [Survey.sequelize.fn('DATE', Survey.sequelize.col('submitted_at'))],
@@ -153,7 +154,7 @@ router.get('/trends', async (req, res) => {
       where: {
         is_complete: true,
         submitted_at: {
-          [Survey.sequelize.Op.gte]: new Date(Date.now() - intervalDays * 24 * 60 * 60 * 1000)
+          [Op.gte]: new Date(Date.now() - intervalDays * 24 * 60 * 60 * 1000)
         }
       },
       group: [Survey.sequelize.fn('DATE_TRUNC', 'day', Survey.sequelize.col('submitted_at'))],
