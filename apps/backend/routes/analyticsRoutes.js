@@ -20,37 +20,64 @@ router.get('/dashboard', async (req, res) => {
     // Statistiques globales
     const totalSurveys = await Survey.count({ where: { is_complete: true } });
     
-    // Moyennes par catégorie
-    const averages = await Survey.findAll({
-      attributes: [
-        [Survey.sequelize.fn('AVG', 
-          Survey.sequelize.literal("(ratings->>'accueil')::float")
-        ), 'avg_accueil'],
-        [Survey.sequelize.fn('AVG', 
-          Survey.sequelize.literal("(ratings->>'securite')::float")
-        ), 'avg_securite'],
-        [Survey.sequelize.fn('AVG', 
-          Survey.sequelize.literal("(ratings->>'confort')::float")
-        ), 'avg_confort'],
-        [Survey.sequelize.fn('AVG', 
-          Survey.sequelize.literal("(ratings->>'services')::float")
-        ), 'avg_services'],
-        [Survey.sequelize.fn('AVG', 
-          Survey.sequelize.literal("(ratings->>'restauration')::float")
-        ), 'avg_restauration'],
-        [Survey.sequelize.fn('AVG', 
-          Survey.sequelize.literal("(ratings->>'boutiques')::float")
-        ), 'avg_boutiques'],
-        [Survey.sequelize.fn('AVG', 
-          Survey.sequelize.literal("(ratings->>'proprete')::float")
-        ), 'avg_proprete'],
-        [Survey.sequelize.fn('AVG', 
-          Survey.sequelize.literal("(ratings->>'signalisation')::float")
-        ), 'avg_signalisation']
-      ],
+    // Moyennes par catégorie principales (calculées individuellement)
+    const surveys = await Survey.findAll({
       where: { is_complete: true },
+      attributes: ['ratings'],
       raw: true
     });
+
+    // Calcul manuel des moyennes pour chaque catégorie
+    const calculateCategoryAverage = (surveys, categoryKeys) => {
+      let totalSum = 0;
+      let totalCount = 0;
+      
+      surveys.forEach(survey => {
+        const ratings = survey.ratings || {};
+        let categorySum = 0;
+        let categoryCount = 0;
+        
+        categoryKeys.forEach(key => {
+          if (ratings[key] && !isNaN(parseFloat(ratings[key]))) {
+            categorySum += parseFloat(ratings[key]);
+            categoryCount++;
+          }
+        });
+        
+        if (categoryCount > 0) {
+          totalSum += categorySum / categoryCount;
+          totalCount++;
+        }
+      });
+      
+      return totalCount > 0 ? (totalSum / totalCount) : null;
+    };
+
+    const averages = [{
+      avg_acces_terminal: calculateCategoryAverage(surveys, [
+        'acces_terminal_0', 'acces_terminal_1', 'acces_terminal_2', 
+        'acces_terminal_3', 'acces_terminal_4', 'acces_terminal_5'
+      ]),
+      avg_enregistrement_controles: calculateCategoryAverage(surveys, [
+        'enregistrement_controles_0', 'enregistrement_controles_1', 'enregistrement_controles_2',
+        'enregistrement_controles_3', 'enregistrement_controles_4', 'enregistrement_controles_5',
+        'enregistrement_controles_6', 'enregistrement_controles_7', 'enregistrement_controles_8'
+      ]),
+      avg_zones_attente: calculateCategoryAverage(surveys, [
+        'zones_attente_0', 'zones_attente_1', 'zones_attente_2', 'zones_attente_3'
+      ]),
+      avg_services_commodites: calculateCategoryAverage(surveys, [
+        'services_commodites_0', 'services_commodites_1', 'services_commodites_2',
+        'services_commodites_3', 'services_commodites_4', 'services_commodites_5'
+      ]),
+      avg_hygiene_infrastructure: calculateCategoryAverage(surveys, [
+        'hygiene_infrastructure_0', 'hygiene_infrastructure_1', 
+        'hygiene_infrastructure_2', 'hygiene_infrastructure_3'
+      ]),
+      avg_personnel_service: calculateCategoryAverage(surveys, [
+        'personnel_service_0', 'personnel_service_1'
+      ])
+    }];
 
     // Distribution par langue
     const languageStats = await Survey.findAll({
@@ -144,11 +171,25 @@ router.get('/trends', async (req, res) => {
       attributes: [
         [Survey.sequelize.fn('DATE_TRUNC', 'day', Survey.sequelize.col('submitted_at')), 'date'],
         [Survey.sequelize.fn('AVG', 
-          Survey.sequelize.literal("(ratings->>'accueil')::float")
-        ), 'avg_accueil'],
+          Survey.sequelize.literal(`(
+            COALESCE((ratings->>'acces_terminal_0')::float, 0) +
+            COALESCE((ratings->>'acces_terminal_1')::float, 0) +
+            COALESCE((ratings->>'acces_terminal_2')::float, 0) +
+            COALESCE((ratings->>'acces_terminal_3')::float, 0) +
+            COALESCE((ratings->>'acces_terminal_4')::float, 0) +
+            COALESCE((ratings->>'acces_terminal_5')::float, 0)
+          ) / 6`)
+        ), 'avg_acces_terminal'],
         [Survey.sequelize.fn('AVG', 
-          Survey.sequelize.literal("(ratings->>'confort')::float")
-        ), 'avg_confort'],
+          Survey.sequelize.literal(`(
+            COALESCE((ratings->>'services_commodites_0')::float, 0) +
+            COALESCE((ratings->>'services_commodites_1')::float, 0) +
+            COALESCE((ratings->>'services_commodites_2')::float, 0) +
+            COALESCE((ratings->>'services_commodites_3')::float, 0) +
+            COALESCE((ratings->>'services_commodites_4')::float, 0) +
+            COALESCE((ratings->>'services_commodites_5')::float, 0)
+          ) / 6`)
+        ), 'avg_services_commodites'],
         [Survey.sequelize.fn('COUNT', Survey.sequelize.col('id')), 'count']
       ],
       where: {

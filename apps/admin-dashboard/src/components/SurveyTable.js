@@ -1,6 +1,151 @@
 import React, { useState, useEffect } from 'react';
 import { Globe } from 'lucide-react';
 
+// Fonction pour convertir les clés techniques en labels lisibles
+const getCategoryLabel = (key, language = 'fr') => {
+  const categoryLabels = {
+    fr: {
+      'acces_terminal': 'Accès et Terminal',
+      'enregistrement_controles': 'Enregistrement & Contrôles',
+      'zones_attente': 'Zones d\'Attente & Embarquement',
+      'services_commodites': 'Services & Commodités',
+      'hygiene_infrastructure': 'Hygiène & Infrastructure',
+      'personnel_service': 'Personnel & Service Global'
+    },
+    ar: {
+      'acces_terminal': 'الوصول والمحطة',
+      'enregistrement_controles': 'التسجيل والمراقبة',
+      'zones_attente': 'مناطق الانتظار والصعود',
+      'services_commodites': 'الخدمات والمرافق',
+      'hygiene_infrastructure': 'النظافة والبنية التحتية',
+      'personnel_service': 'الموظفون والخدمة العامة'
+    },
+    en: {
+      'acces_terminal': 'Access & Terminal',
+      'enregistrement_controles': 'Check-in & Controls',
+      'zones_attente': 'Waiting Areas & Boarding',
+      'services_commodites': 'Services & Amenities',
+      'hygiene_infrastructure': 'Hygiene & Infrastructure',
+      'personnel_service': 'Staff & Global Service'
+    }
+  };
+  
+  const questionsLabels = {
+    fr: {
+      'acces_terminal_0': 'Facilité de se rendre à l\'aéroport',
+      'acces_terminal_1': 'Options de transport terrestre',
+      'acces_terminal_2': 'Signalisation pour accéder à l\'aérogate',
+      'acces_terminal_3': 'Distance à parcourir à pied dans le terminal',
+      'acces_terminal_4': 'Facilité à s\'orienter dans l\'aéroport',
+      'acces_terminal_5': 'Ambiance générale de l\'aéroport',
+      'enregistrement_controles_0': 'Facilité à trouver la zone d\'enregistrement',
+      'enregistrement_controles_1': 'Temps d\'attente à l\'enregistrement',
+      'enregistrement_controles_2': 'Courtoisie et serviabilité du personnel enregistrement',
+      'enregistrement_controles_3': 'Facilité à passer le contrôle de sécurité',
+      'enregistrement_controles_4': 'Rapidité/efficacité du contrôle de sécurité',
+      'enregistrement_controles_5': 'Temps d\'attente au contrôle de sécurité',
+      'enregistrement_controles_6': 'Courtoisie et serviabilité du personnel de sécurité',
+      'enregistrement_controles_7': 'Temps d\'attente au contrôle des passeports',
+      'enregistrement_controles_8': 'Courtoisie et serviabilité du personnel de contrôle des passeports',
+      'zones_attente_0': 'Disponibilité des sièges dans les zones d\'embarquement',
+      'zones_attente_1': 'Confort des salles d\'attente dans les zones d\'embarquement',
+      'zones_attente_2': 'Disponibilité de l\'information sur les vols',
+      'zones_attente_3': 'Facilité de correspondance',
+      'services_commodites_0': 'Restaurants, Bars, Cafés',
+      'services_commodites_1': 'Rapport qualité/prix Restaurants, Bars, Cafés',
+      'services_commodites_2': 'Boutiques',
+      'services_commodites_3': 'Rapport qualité/prix des boutiques',
+      'services_commodites_4': 'Courtoisie et serviabilité du personnel des boutiques et restaurants',
+      'services_commodites_5': 'Qualité du service WiFi',
+      'hygiene_infrastructure_0': 'Propreté du terminal de l\'aéroport',
+      'hygiene_infrastructure_1': 'Propreté des toilettes',
+      'hygiene_infrastructure_2': 'Disponibilité des toilettes',
+      'hygiene_infrastructure_3': 'Sécurité sanitaire',
+      'personnel_service_0': 'Courtoisie et serviabilité du personnel de l\'aéroport',
+      'personnel_service_1': 'Disponibilité de la borne de retouche'
+    },
+    ar: {
+      'acces_terminal_0': 'سهولة الوصول إلى المطار',
+      'acces_terminal_1': 'خيارات النقل البري',
+      'acces_terminal_2': 'الإشارات للوصول إلى المحطة',
+      'acces_terminal_3': 'المسافة المقطوعة سيراً في المحطة',
+      'acces_terminal_4': 'سهولة التوجه في المطار',
+      'acces_terminal_5': 'الجو العام للمطار',
+      'enregistrement_controles_0': 'سهولة العثور على منطقة التسجيل',
+      'enregistrement_controles_1': 'وقت الانتظار في التسجيل',
+      'enregistrement_controles_2': 'لطف وخدمة موظفي التسجيل',
+      'enregistrement_controles_3': 'سهولة المرور بالفحص الأمني',
+      'enregistrement_controles_4': 'سرعة/كفاءة الفحص الأمني',
+      'enregistrement_controles_5': 'وقت الانتظار في الفحص الأمني',
+      'enregistrement_controles_6': 'لطف وخدمة موظفي الأمن',
+      'enregistrement_controles_7': 'وقت الانتظار في فحص جوازات السفر',
+      'enregistrement_controles_8': 'لطف وخدمة موظفي فحص جوازات السفر',
+      'zones_attente_0': 'توفر المقاعد في مناطق الصعود',
+      'zones_attente_1': 'راحة صالات الانتظار في مناطق الصعود',
+      'zones_attente_2': 'توفر معلومات الرحلات',
+      'zones_attente_3': 'سهولة المراسلة',
+      'services_commodites_0': 'المطاعم والبارات والمقاهي',
+      'services_commodites_1': 'جودة/سعر المطاعم والبارات والمقاهي',
+      'services_commodites_2': 'المتاجر',
+      'services_commodites_3': 'جودة/سعر المتاجر',
+      'services_commodites_4': 'لطف وخدمة موظفي المتاجر والمطاعم',
+      'services_commodites_5': 'جودة خدمة الواي فاي',
+      'hygiene_infrastructure_0': 'نظافة محطة المطار',
+      'hygiene_infrastructure_1': 'نظافة دورات المياه',
+      'hygiene_infrastructure_2': 'توفر دورات المياه',
+      'hygiene_infrastructure_3': 'السلامة الصحية',
+      'personnel_service_0': 'لطف وخدمة موظفي المطار',
+      'personnel_service_1': 'توفر نقطة التنقيح'
+    },
+    en: {
+      'acces_terminal_0': 'Ease of getting to the airport',
+      'acces_terminal_1': 'Ground transport options',
+      'acces_terminal_2': 'Signage to access the terminal',
+      'acces_terminal_3': 'Walking distance in the terminal',
+      'acces_terminal_4': 'Ease of orientation in the airport',
+      'acces_terminal_5': 'General atmosphere of the airport',
+      'enregistrement_controles_0': 'Ease of finding the check-in area',
+      'enregistrement_controles_1': 'Waiting time at check-in',
+      'enregistrement_controles_2': 'Courtesy and helpfulness of check-in staff',
+      'enregistrement_controles_3': 'Ease of passing security control',
+      'enregistrement_controles_4': 'Speed/efficiency of security control',
+      'enregistrement_controles_5': 'Waiting time at security control',
+      'enregistrement_controles_6': 'Courtesy and helpfulness of security staff',
+      'enregistrement_controles_7': 'Waiting time at passport control',
+      'enregistrement_controles_8': 'Courtesy and helpfulness of passport control staff',
+      'zones_attente_0': 'Availability of seats in boarding areas',
+      'zones_attente_1': 'Comfort of waiting rooms in boarding areas',
+      'zones_attente_2': 'Availability of flight information',
+      'zones_attente_3': 'Ease of correspondence',
+      'services_commodites_0': 'Restaurants, Bars, Cafes',
+      'services_commodites_1': 'Quality/price ratio Restaurants, Bars, Cafes',
+      'services_commodites_2': 'Shops',
+      'services_commodites_3': 'Quality/price ratio of shops',
+      'services_commodites_4': 'Courtesy and helpfulness of shop and restaurant staff',
+      'services_commodites_5': 'WiFi service quality',
+      'hygiene_infrastructure_0': 'Cleanliness of airport terminal',
+      'hygiene_infrastructure_1': 'Cleanliness of toilets',
+      'hygiene_infrastructure_2': 'Availability of toilets',
+      'hygiene_infrastructure_3': 'Health safety',
+      'personnel_service_0': 'Courtesy and helpfulness of airport staff',
+      'personnel_service_1': 'Availability of information desk'
+    }
+  };
+  
+  // D'abord essayer les questions détaillées
+  if (questionsLabels[language] && questionsLabels[language][key]) {
+    return questionsLabels[language][key];
+  }
+  
+  // Ensuite essayer les catégories
+  if (categoryLabels[language] && categoryLabels[language][key]) {
+    return categoryLabels[language][key];
+  }
+  
+  // Si pas trouvé, retourner la clé formatée
+  return key.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
+};
+
 const SurveyTable = () => {
   const [surveys, setSurveys] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -420,11 +565,31 @@ const SurveyTable = () => {
                 {selectedSurvey.ratings && (
                   <div>
                     <strong>Évaluations détaillées:</strong>
-                    <div className="mt-2 grid grid-cols-2 gap-2">
+                    <div className="mt-3 space-y-3">
                       {Object.entries(selectedSurvey.ratings).map(([key, value]) => (
-                        <div key={key} className="flex justify-between text-sm">
-                          <span>{key}:</span>
-                          <span>{value}/5</span>
+                        <div key={key} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg border">
+                          <span className="font-medium text-gray-700 flex-1">
+                            {getCategoryLabel(key, 'fr')}
+                          </span>
+                          <div className="flex items-center space-x-2">
+                            <span className={`px-2 py-1 rounded text-sm font-bold ${
+                              value >= 4 ? 'bg-green-100 text-green-800' :
+                              value >= 3 ? 'bg-yellow-100 text-yellow-800' :
+                              value >= 2 ? 'bg-orange-100 text-orange-800' :
+                              'bg-red-100 text-red-800'
+                            }`}>
+                              {value}/5
+                            </span>
+                            <div className="flex space-x-1">
+                              {[1, 2, 3, 4, 5].map((star) => (
+                                <span key={star} className={`text-sm ${
+                                  star <= value ? 'text-yellow-400' : 'text-gray-300'
+                                }`}>
+                                  ★
+                                </span>
+                              ))}
+                            </div>
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -434,11 +599,16 @@ const SurveyTable = () => {
                 {selectedSurvey.comments && Object.keys(selectedSurvey.comments).length > 0 && (
                   <div>
                     <strong>Commentaires:</strong>
-                    <div className="mt-2 space-y-2">
+                    <div className="mt-3 space-y-3">
                       {Object.entries(selectedSurvey.comments).map(([key, comment]) => (
                         comment && (
-                          <div key={key} className="p-2 bg-gray-50 rounded text-sm">
-                            <strong>{key}:</strong> {comment}
+                          <div key={key} className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                            <div className="font-semibold text-blue-900 mb-2">
+                              {getCategoryLabel(key, 'fr')}
+                            </div>
+                            <div className="text-gray-700 text-sm leading-relaxed italic">
+                              « {comment} »
+                            </div>
                           </div>
                         )
                       ))}

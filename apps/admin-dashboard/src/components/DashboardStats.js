@@ -1,6 +1,62 @@
 import React from 'react';
 import { BarChart3, Star, Globe, TrendingUp, Clipboard, Earth, Calendar, Target } from 'lucide-react';
 
+// Fonction pour convertir les clés techniques en labels lisibles (TOUJOURS EN FRANÇAIS POUR L'ADMIN)
+const getCategoryLabel = (key, language = 'fr') => {
+  const categoryLabels = {
+    fr: {
+      // Catégories principales
+      'acces_terminal': 'Accès et Terminal',
+      'enregistrement_controles': 'Enregistrement & Contrôles',
+      'zones_attente': 'Zones d\'Attente & Embarquement',
+      'services_commodites': 'Services & Commodités',
+      'hygiene_infrastructure': 'Hygiène & Infrastructure',
+      'personnel_service': 'Personnel & Service Global',
+      
+      // Questions détaillées
+      'acces_terminal_0': 'Facilité de se rendre à l\'aéroport',
+      'acces_terminal_1': 'Options de transport terrestre',
+      'acces_terminal_2': 'Signalisation pour accéder à l\'aérogate',
+      'acces_terminal_3': 'Distance à parcourir à pied dans le terminal',
+      'acces_terminal_4': 'Facilité à s\'orienter dans l\'aéroport',
+      'acces_terminal_5': 'Ambiance générale de l\'aéroport',
+      'enregistrement_controles_0': 'Facilité à trouver la zone d\'enregistrement',
+      'enregistrement_controles_1': 'Temps d\'attente à l\'enregistrement',
+      'enregistrement_controles_2': 'Courtoisie et serviabilité du personnel enregistrement',
+      'enregistrement_controles_3': 'Facilité à passer le contrôle de sécurité',
+      'enregistrement_controles_4': 'Rapidité/efficacité du contrôle de sécurité',
+      'enregistrement_controles_5': 'Temps d\'attente au contrôle de sécurité',
+      'enregistrement_controles_6': 'Courtoisie et serviabilité du personnel de sécurité',
+      'enregistrement_controles_7': 'Temps d\'attente au contrôle des passeports',
+      'enregistrement_controles_8': 'Courtoisie et serviabilité du personnel de contrôle des passeports',
+      'zones_attente_0': 'Disponibilité des sièges dans les zones d\'embarquement',
+      'zones_attente_1': 'Confort des salles d\'attente dans les zones d\'embarquement',
+      'zones_attente_2': 'Disponibilité de l\'information sur les vols',
+      'zones_attente_3': 'Facilité de correspondance',
+      'services_commodites_0': 'Restaurants, Bars, Cafés',
+      'services_commodites_1': 'Rapport qualité/prix Restaurants, Bars, Cafés',
+      'services_commodites_2': 'Boutiques',
+      'services_commodites_3': 'Rapport qualité/prix des boutiques',
+      'services_commodites_4': 'Courtoisie et serviabilité du personnel des boutiques et restaurants',
+      'services_commodites_5': 'Qualité du service WiFi',
+      'hygiene_infrastructure_0': 'Propreté du terminal de l\'aéroport',
+      'hygiene_infrastructure_1': 'Propreté des toilettes',
+      'hygiene_infrastructure_2': 'Disponibilité des toilettes',
+      'hygiene_infrastructure_3': 'Sécurité sanitaire',
+      'personnel_service_0': 'Courtoisie et serviabilité du personnel de l\'aéroport',
+      'personnel_service_1': 'Disponibilité de la borne de retouche'
+    }
+  };
+  
+  // TOUJOURS retourner le label français pour l'admin
+  if (categoryLabels.fr[key]) {
+    return categoryLabels.fr[key];
+  }
+  
+  // Si pas trouvé, retourner la clé formatée
+  return key.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
+};
+
 const DashboardStats = ({ data }) => {
   if (!data) {
     return (
@@ -19,10 +75,24 @@ const DashboardStats = ({ data }) => {
   
   // Calcul de la satisfaction moyenne générale
   const avgRatings = summary.averageRatings || {};
-  const allRatings = Object.values(avgRatings).filter(val => val !== null && val !== undefined);
+  
+  // Mapping des nouvelles clés de l'API vers les anciennes pour compatibilité
+  const mappedRatings = {
+    'avg_acces_terminal': avgRatings.avg_acces_terminal,
+    'avg_enregistrement_controles': avgRatings.avg_enregistrement_controles,
+    'avg_zones_attente': avgRatings.avg_zones_attente,
+    'avg_services_commodites': avgRatings.avg_services_commodites,
+    'avg_hygiene_infrastructure': avgRatings.avg_hygiene_infrastructure,
+    'avg_personnel_service': avgRatings.avg_personnel_service
+  };
+  
+  const allRatings = Object.values(mappedRatings).filter(val => val !== null && val !== undefined);
   const overallAverage = allRatings.length > 0 
     ? (allRatings.reduce((sum, val) => sum + parseFloat(val), 0) / allRatings.length).toFixed(1)
     : 'N/A';
+  
+  // Utiliser les nouvelles clés pour l'affichage
+  const displayRatings = mappedRatings;
 
   // Calcul du taux de croissance hebdomadaire
   const weeklyData = distributions.weekly || [];
@@ -123,19 +193,8 @@ const DashboardStats = ({ data }) => {
         </h3>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {Object.entries(avgRatings).map(([category, rating]) => {
-            const categoryNames = {
-              avg_accueil: 'Accueil',
-              avg_securite: 'Sécurité', 
-              avg_confort: 'Confort',
-              avg_services: 'Services',
-              avg_restauration: 'Restauration',
-              avg_boutiques: 'Boutiques',
-              avg_proprete: 'Propreté',
-              avg_signalisation: 'Signalisation'
-            };
-
-            const displayName = categoryNames[category] || category;
+          {Object.entries(displayRatings).map(([category, rating]) => {
+            const displayName = getCategoryLabel(category, 'fr');
             const ratingValue = rating ? parseFloat(rating).toFixed(1) : 'N/A';
             const percentage = rating ? (parseFloat(rating) / 5 * 100) : 0;
 

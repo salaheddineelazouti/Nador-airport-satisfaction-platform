@@ -1,6 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { Target } from 'lucide-react';
 
+// Fonction pour convertir les clés techniques en labels lisibles (TOUJOURS EN FRANÇAIS POUR L'ADMIN)
+const getCategoryLabel = (key, language = 'fr') => {
+  const categoryLabels = {
+    fr: {
+      // Catégories principales
+      'avg_acces_terminal': 'Accès et Terminal',
+      'avg_enregistrement_controles': 'Enregistrement & Contrôles',
+      'avg_zones_attente': 'Zones d\'Attente & Embarquement',
+      'avg_services_commodites': 'Services & Commodités',
+      'avg_hygiene_infrastructure': 'Hygiène & Infrastructure',
+      'avg_personnel_service': 'Personnel & Service Global'
+    }
+  };
+  
+  // TOUJOURS retourner le label français pour l'admin
+  if (categoryLabels.fr[key]) {
+    return categoryLabels.fr[key];
+  }
+  
+  // Si pas trouvé, retourner la clé formatée
+  return key.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
+};
+
 const SurveyCharts = ({ data }) => {
   const [trendsData, setTrendsData] = useState(null);
   const [selectedPeriod, setSelectedPeriod] = useState('week');
@@ -155,19 +178,8 @@ const SurveyCharts = ({ data }) => {
 
   // Données pour les graphiques
   const ratingsChartData = Object.entries(summary.averageRatings || {}).map(([key, value]) => {
-    const categoryNames = {
-      avg_accueil: 'Accueil',
-      avg_securite: 'Sécurité',
-      avg_confort: 'Confort',
-      avg_services: 'Services',
-      avg_restauration: 'Restauration',
-      avg_boutiques: 'Boutiques',
-      avg_proprete: 'Propreté',
-      avg_signalisation: 'Signalisation'
-    };
-    
     return {
-      label: categoryNames[key] || key,
+      label: getCategoryLabel(key, 'fr'),
       value: value ? parseFloat(value).toFixed(1) : 0
     };
   });
