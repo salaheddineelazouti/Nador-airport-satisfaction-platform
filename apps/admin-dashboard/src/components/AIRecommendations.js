@@ -4,10 +4,11 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Brain, TrendingUp, AlertTriangle, CheckCircle, Clock, Target, Lightbulb, RefreshCw, Zap, History } from 'lucide-react';
+import { Brain, TrendingUp, AlertTriangle, CheckCircle, Clock, Target, Lightbulb, RefreshCw, Zap, History, FileText } from 'lucide-react';
 import deepseekService from '../services/deepseekService';
 import analysisHistoryService from '../services/analysisHistoryService';
 import AnalysisHistory from './AnalysisHistory';
+import { exportRecommendationsToPDF } from '../utils/exportUtils';
 
 const AIRecommendations = ({ dashboardData, surveys = [] }) => {
   const [recommendations, setRecommendations] = useState(null);
@@ -85,6 +86,29 @@ const AIRecommendations = ({ dashboardData, surveys = [] }) => {
   const handleRefresh = () => {
     console.log('Actualisation demandee - generation d\'une nouvelle analyse...');
     generateRecommendations();
+  };
+
+  const handleExportPDF = async () => {
+    if (!recommendations) {
+      alert('Aucune recommandation à exporter');
+      return;
+    }
+
+    try {
+      console.log('Export PDF des recommandations...');
+      const result = await exportRecommendationsToPDF(recommendations, dashboardData, executiveSummary);
+      
+      if (result.success) {
+        console.log(`PDF exporté avec succès: ${result.fileName}`);
+        // Optionnel: afficher une notification de succès
+      } else {
+        console.error('Erreur export PDF:', result.error);
+        alert(`Erreur lors de l'export PDF: ${result.error}`);
+      }
+    } catch (error) {
+      console.error('Erreur export PDF:', error);
+      alert('Erreur lors de l\'export PDF');
+    }
   };
 
   const getScoreColor = (score) => {
@@ -200,17 +224,28 @@ const AIRecommendations = ({ dashboardData, surveys = [] }) => {
             <div className="flex items-center space-x-2">
               <button
                 onClick={handleRefresh}
-                className="flex items-center space-x-1 hover:text-white transition-colors"
+                disabled={loading}
+                className="flex items-center px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 text-sm"
               >
-                <RefreshCw className="w-4 h-4" />
-                <span>Actualiser</span>
+                <RefreshCw className={`w-4 h-4 mr-1 ${loading ? 'animate-spin' : ''}`} />
+                Actualiser
               </button>
+              
+              <button
+                onClick={handleExportPDF}
+                disabled={loading || !recommendations}
+                className="flex items-center px-3 py-1 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 text-sm"
+              >
+                <FileText className="w-4 h-4 mr-1" />
+                Export PDF
+              </button>
+              
               <button
                 onClick={() => setShowHistory(!showHistory)}
-                className="flex items-center space-x-1 hover:text-white transition-colors"
+                className="flex items-center px-3 py-1 bg-purple-600 text-white rounded-lg hover:bg-purple-700 text-sm"
               >
-                <History className="w-4 h-4" />
-                <span>Historique</span>
+                <History className="w-4 h-4 mr-1" />
+                {showHistory ? 'Recommandations' : 'Historique'}
               </button>
             </div>
           </div>

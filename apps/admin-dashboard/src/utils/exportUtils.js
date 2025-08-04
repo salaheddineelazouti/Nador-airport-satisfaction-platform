@@ -578,3 +578,328 @@ export const exportToPDF = async (dashboardData) => {
     return { success: false, error: error.message };
   }
 };
+
+/**
+ * Export des recommandations IA en PDF
+ * @param {Object} recommendations - Donnees des recommandations IA
+ * @param {Object} dashboardData - Donnees du dashboard pour contexte
+ * @param {string} executiveSummary - Resume executif
+ */
+export const exportRecommendationsToPDF = async (recommendations, dashboardData, executiveSummary) => {
+  try {
+    const pdf = new jsPDF();
+    
+    // Configuration des couleurs ONDA
+    const colors = {
+      primary: [52, 152, 219],    // Bleu ONDA
+      secondary: [231, 76, 60],   // Rouge
+      success: [46, 204, 113],    // Vert
+      warning: [241, 196, 15],    // Jaune
+      accent: [155, 89, 182],     // Violet
+      text: [44, 62, 80],         // Gris fonce
+      lightGray: [236, 240, 241]  // Gris clair
+    };
+
+    // En-tete avec logo et titre
+    pdf.setFillColor(...colors.primary);
+    pdf.rect(0, 0, 210, 40, 'F');
+    
+    // Titre principal
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(24);
+    pdf.text('RECOMMANDATIONS IA', 20, 25);
+    
+    pdf.setFontSize(12);
+    pdf.text('Aide a la Decision - Aeroport Nador Al Aroui', 20, 32);
+    
+    // Logo ONDA (si disponible)
+    pdf.setFontSize(10);
+    pdf.text('ONDA - Office National Des Aeroports', 140, 32);
+    
+    // Barre decorative
+    pdf.setFillColor(...colors.secondary);
+    pdf.rect(0, 40, 210, 3, 'F');
+    
+    let yPos = 55;
+    
+    // Informations generales
+    pdf.setFillColor(...colors.lightGray);
+    pdf.roundedRect(20, yPos - 5, 170, 25, 4, 4, 'F');
+    
+    pdf.setTextColor(...colors.text);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(14);
+    pdf.text('INFORMATIONS GENERALES', 25, yPos + 5);
+    
+    pdf.setFont('helvetica', 'normal');
+    pdf.setFontSize(10);
+    pdf.text(`Date d'analyse: ${new Date().toLocaleDateString('fr-FR')} a ${new Date().toLocaleTimeString('fr-FR')}`, 25, yPos + 12);
+    pdf.text(`Score global: ${recommendations.score_global?.toFixed(1) || 'N/A'}/10`, 25, yPos + 19);
+    pdf.text(`Nombre d'alertes: ${recommendations.alerts?.length || 0}`, 120, yPos + 12);
+    pdf.text(`Recommandations: ${recommendations.recommendations?.length || 0}`, 120, yPos + 19);
+    
+    yPos += 35;
+    
+    // Resume executif
+    if (executiveSummary) {
+      pdf.setFillColor(...colors.accent);
+      pdf.rect(20, yPos, 5, 15, 'F');
+      
+      pdf.setTextColor(...colors.text);
+      pdf.setFontSize(16);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('RESUME EXECUTIF', 30, yPos + 8);
+      
+      yPos += 20;
+      
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'normal');
+      const summaryLines = pdf.splitTextToSize(executiveSummary, 170);
+      pdf.text(summaryLines, 20, yPos);
+      yPos += summaryLines.length * 5 + 10;
+    }
+    
+    // Verifier si nouvelle page necessaire
+    if (yPos > 240) {
+      pdf.addPage();
+      yPos = 30;
+    }
+    
+    // Priorites strategiques
+    if (recommendations.priorities?.length > 0) {
+      pdf.setFillColor(...colors.secondary);
+      pdf.rect(20, yPos, 5, 15, 'F');
+      
+      pdf.setTextColor(...colors.text);
+      pdf.setFontSize(16);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('PRIORITES STRATEGIQUES', 30, yPos + 8);
+      
+      yPos += 20;
+      
+      recommendations.priorities.forEach((priority, index) => {
+        const priorityColors = [
+          [231, 76, 60],   // Rouge pour priorite 1
+          [243, 156, 18],  // Orange pour priorite 2  
+          [52, 152, 219]   // Bleu pour priorite 3
+        ];
+        
+        const color = priorityColors[index] || [149, 165, 166];
+        
+        // Numero de priorite
+        pdf.setFillColor(...color);
+        pdf.circle(25, yPos + 3, 4, 'F');
+        pdf.setTextColor(255, 255, 255);
+        pdf.setFont('helvetica', 'bold');
+        pdf.setFontSize(10);
+        pdf.text((index + 1).toString(), 24, yPos + 4);
+        
+        // Texte de la priorite
+        pdf.setTextColor(...colors.text);
+        pdf.setFont('helvetica', 'normal');
+        pdf.setFontSize(11);
+        const priorityText = pdf.splitTextToSize(priority, 160);
+        pdf.text(priorityText, 35, yPos + 4);
+        
+        yPos += Math.max(priorityText.length * 5, 10) + 5;
+      });
+      
+      yPos += 10;
+    }
+    
+    // Verifier si nouvelle page necessaire
+    if (yPos > 220) {
+      pdf.addPage();
+      yPos = 30;
+    }
+    
+    // Alertes critiques
+    if (recommendations.alerts?.length > 0) {
+      pdf.setFillColor(243, 156, 18); // Orange
+      pdf.rect(20, yPos, 5, 15, 'F');
+      
+      pdf.setTextColor(...colors.text);
+      pdf.setFontSize(16);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('ALERTES CRITIQUES', 30, yPos + 8);
+      
+      yPos += 20;
+      
+      recommendations.alerts.forEach((alert, index) => {
+        // Icone d'alerte
+        pdf.setFillColor(231, 76, 60); // Rouge
+        pdf.roundedRect(20, yPos - 2, 8, 8, 1, 1, 'F');
+        pdf.setTextColor(255, 255, 255);
+        pdf.setFont('helvetica', 'bold');
+        pdf.setFontSize(8);
+        pdf.text('!', 23, yPos + 2);
+        
+        // Texte de l'alerte
+        pdf.setTextColor(...colors.text);
+        pdf.setFont('helvetica', 'normal');
+        pdf.setFontSize(10);
+        const alertText = pdf.splitTextToSize(alert, 160);
+        pdf.text(alertText, 35, yPos + 2);
+        
+        yPos += Math.max(alertText.length * 4, 8) + 5;
+      });
+      
+      yPos += 10;
+    }
+    
+    // Verifier si nouvelle page necessaire
+    if (yPos > 200) {
+      pdf.addPage();
+      yPos = 30;
+    }
+    
+    // Recommandations detaillees
+    if (recommendations.recommendations?.length > 0) {
+      pdf.setFillColor(...colors.success);
+      pdf.rect(20, yPos, 5, 15, 'F');
+      
+      pdf.setTextColor(...colors.text);
+      pdf.setFontSize(16);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('RECOMMANDATIONS DETAILLEES', 30, yPos + 8);
+      
+      yPos += 25;
+      
+      recommendations.recommendations.forEach((rec, index) => {
+        // Verifier si nouvelle page necessaire
+        if (yPos > 220) {
+          pdf.addPage();
+          yPos = 30;
+        }
+        
+        // Boite de recommendation
+        pdf.setFillColor(248, 249, 250);
+        const boxHeight = 35;
+        pdf.roundedRect(20, yPos - 5, 170, boxHeight, 3, 3, 'F');
+        
+        // Categorie et timeline
+        pdf.setTextColor(...colors.primary);
+        pdf.setFont('helvetica', 'bold');
+        pdf.setFontSize(12);
+        pdf.text(rec.category || 'General', 25, yPos + 2);
+        
+        pdf.setTextColor(...colors.accent);
+        pdf.setFont('helvetica', 'normal');
+        pdf.setFontSize(9);
+        pdf.text(rec.timeline || 'N/A', 160, yPos + 2);
+        
+        // Probleme identifie
+        pdf.setTextColor(231, 76, 60); // Rouge
+        pdf.setFont('helvetica', 'bold');
+        pdf.setFontSize(9);
+        pdf.text('Probleme:', 25, yPos + 8);
+        pdf.setTextColor(...colors.text);
+        pdf.setFont('helvetica', 'normal');
+        const issueText = pdf.splitTextToSize(rec.issue || 'Non specifie', 120);
+        pdf.text(issueText, 45, yPos + 8);
+        
+        // Action recommandee
+        pdf.setTextColor(46, 204, 113); // Vert
+        pdf.setFont('helvetica', 'bold');
+        pdf.setFontSize(9);
+        pdf.text('Action:', 25, yPos + 15);
+        pdf.setTextColor(...colors.text);
+        pdf.setFont('helvetica', 'normal');
+        const actionText = pdf.splitTextToSize(rec.action || 'Non specifiee', 130);
+        pdf.text(actionText, 40, yPos + 15);
+        
+        // Impact attendu
+        pdf.setTextColor(155, 89, 182); // Violet
+        pdf.setFont('helvetica', 'bold');
+        pdf.setFontSize(9);
+        pdf.text('Impact:', 25, yPos + 22);
+        pdf.setTextColor(...colors.text);
+        pdf.setFont('helvetica', 'normal');
+        const impactText = pdf.splitTextToSize(rec.impact || 'Non specifie', 130);
+        pdf.text(impactText, 40, yPos + 22);
+        
+        yPos += boxHeight + 10;
+      });
+    }
+    
+    // Verifier si nouvelle page necessaire pour le plan d'action
+    if (yPos > 200) {
+      pdf.addPage();
+      yPos = 30;
+    }
+    
+    // Plan d'action 30 jours
+    if (recommendations.next_actions?.length > 0) {
+      pdf.setFillColor(...colors.primary);
+      pdf.rect(20, yPos, 5, 15, 'F');
+      
+      pdf.setTextColor(...colors.text);
+      pdf.setFontSize(16);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('PLAN D\'ACTION 30 JOURS', 30, yPos + 8);
+      
+      yPos += 25;
+      
+      recommendations.next_actions.forEach((action, index) => {
+        // Numero d'etape
+        pdf.setFillColor(...colors.primary);
+        pdf.circle(25, yPos + 3, 4, 'F');
+        pdf.setTextColor(255, 255, 255);
+        pdf.setFont('helvetica', 'bold');
+        pdf.setFontSize(10);
+        pdf.text((index + 1).toString(), 24, yPos + 4);
+        
+        // Texte de l'action
+        pdf.setTextColor(...colors.text);
+        pdf.setFont('helvetica', 'normal');
+        pdf.setFontSize(10);
+        const actionText = pdf.splitTextToSize(action, 160);
+        pdf.text(actionText, 35, yPos + 4);
+        
+        yPos += Math.max(actionText.length * 4, 8) + 5;
+      });
+    }
+    
+    // Pied de page professionnel
+    const addFooter = (pageNumber = 1) => {
+      const pageHeight = pdf.internal.pageSize.height;
+      
+      // Ligne de separation
+      pdf.setDrawColor(...colors.lightGray);
+      pdf.line(20, pageHeight - 20, 190, pageHeight - 20);
+      
+      // Informations de bas de page
+      pdf.setTextColor(...colors.text);
+      pdf.setFontSize(8);
+      pdf.text('ONDA - Office National Des Aeroports', 20, pageHeight - 12);
+      pdf.text('Aeroport Nador Al Aroui - Recommandations IA', 20, pageHeight - 8);
+      
+      // Numero de page
+      pdf.text(`Page ${pageNumber}`, 180, pageHeight - 8);
+      
+      // Watermark discret
+      pdf.setTextColor(200, 200, 200);
+      pdf.setFontSize(6);
+      pdf.text('Genere automatiquement par DeepSeek AI', 20, pageHeight - 4);
+    };
+    
+    // Ajouter le pied de page a toutes les pages
+    const totalPages = pdf.internal.getNumberOfPages();
+    for (let i = 1; i <= totalPages; i++) {
+      pdf.setPage(i);
+      addFooter(i);
+    }
+    
+    // Telecharger le PDF
+    const fileName = `recommandations_ia_nador_${new Date().toISOString().split('T')[0]}.pdf`;
+    pdf.save(fileName);
+    
+    console.log(`PDF des recommandations genere: ${fileName}`);
+    return { success: true, fileName };
+    
+  } catch (error) {
+    console.error('Erreur lors de l\'export PDF des recommandations:', error);
+    return { success: false, error: error.message };
+  }
+};
