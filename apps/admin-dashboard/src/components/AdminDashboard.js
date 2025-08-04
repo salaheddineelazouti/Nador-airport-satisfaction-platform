@@ -5,6 +5,7 @@ import LoginModal from './LoginModal';
 import DashboardStats from './DashboardStats';
 import SurveyCharts from './SurveyCharts';
 import SurveyTable from './SurveyTable';
+import { exportToExcel, exportToCSV, exportToPDF } from '../utils/exportUtils';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -12,6 +13,8 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [exportLoading, setExportLoading] = useState(false);
+  const [notification, setNotification] = useState(null);
 
   useEffect(() => {
     // TODO: Vérifier l'authentification depuis localStorage/sessionStorage
@@ -68,16 +71,48 @@ const AdminDashboard = () => {
     setDashboardData(null);
   };
 
-  const handleExport = (type) => {
-    // Implémentation future de l'export
-    const exportTypes = {
-      excel: 'Fichier Excel (.xlsx)',
-      pdf: 'Rapport PDF (.pdf)',
-      csv: 'Données CSV (.csv)'
-    };
+  // Fonction pour afficher les notifications
+  const showNotification = (message, type = 'success') => {
+    setNotification({ message, type });
+    setTimeout(() => setNotification(null), 5000);
+  };
+
+  const handleExport = async (type) => {
+    if (exportLoading) return;
     
-    alert(`Export ${exportTypes[type]} en cours de développement...`);
-    console.log(`Export demandé: ${type}`);
+    setExportLoading(true);
+    
+    try {
+      let result;
+      
+      switch (type) {
+        case 'excel':
+          showNotification('Génération du fichier Excel en cours...', 'info');
+          result = await exportToExcel();
+          break;
+        case 'csv':
+          showNotification('Génération du fichier CSV en cours...', 'info');
+          result = await exportToCSV();
+          break;
+        case 'pdf':
+          showNotification('Génération du rapport PDF en cours...', 'info');
+          result = await exportToPDF(dashboardData);
+          break;
+        default:
+          throw new Error('Type d\'export non supporté');
+      }
+      
+      if (result.success) {
+        showNotification(`Fichier ${result.fileName} téléchargé avec succès !`, 'success');
+      } else {
+        throw new Error(result.error || 'Erreur lors de l\'export');
+      }
+    } catch (error) {
+      console.error('Erreur lors de l\'export:', error);
+      showNotification(`Erreur lors de l'export: ${error.message}`, 'error');
+    } finally {
+      setExportLoading(false);
+    }
   };
 
   const tabs = [
@@ -250,7 +285,8 @@ const AdminDashboard = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <button 
                   onClick={() => handleExport('excel')}
-                  className="p-6 border-2 border-green-200 bg-green-50 rounded-xl hover:bg-green-100 hover:border-green-300 transition-all duration-200 transform hover:scale-105"
+                  disabled={exportLoading}
+                  className={`p-6 border-2 border-green-200 bg-green-50 rounded-xl hover:bg-green-100 hover:border-green-300 transition-all duration-200 transform hover:scale-105 ${exportLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   <div className="flex items-center space-x-4">
                     <div className="bg-green-600 p-3 rounded-lg">
@@ -266,7 +302,8 @@ const AdminDashboard = () => {
                 
                 <button 
                   onClick={() => handleExport('pdf')}
-                  className="p-6 border-2 border-red-200 bg-red-50 rounded-xl hover:bg-red-100 hover:border-red-300 transition-all duration-200 transform hover:scale-105"
+                  disabled={exportLoading}
+                  className={`p-6 border-2 border-red-200 bg-red-50 rounded-xl hover:bg-red-100 hover:border-red-300 transition-all duration-200 transform hover:scale-105 ${exportLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   <div className="flex items-center space-x-4">
                     <div className="bg-red-600 p-3 rounded-lg">
@@ -282,7 +319,8 @@ const AdminDashboard = () => {
                 
                 <button 
                   onClick={() => handleExport('csv')}
-                  className="p-6 border-2 border-blue-200 bg-blue-50 rounded-xl hover:bg-blue-100 hover:border-blue-300 transition-all duration-200 transform hover:scale-105"
+                  disabled={exportLoading}
+                  className={`p-6 border-2 border-blue-200 bg-blue-50 rounded-xl hover:bg-blue-100 hover:border-blue-300 transition-all duration-200 transform hover:scale-105 ${exportLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   <div className="flex items-center space-x-4">
                     <div className="bg-blue-600 p-3 rounded-lg">
@@ -413,6 +451,29 @@ const AdminDashboard = () => {
           )}
         </div>
       </div>
+      
+      {/* Composant de notification */}
+      {notification && (
+        <div className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg transform transition-all duration-300 ${
+          notification.type === 'success' ? 'bg-green-500 text-white' :
+          notification.type === 'error' ? 'bg-red-500 text-white' :
+          notification.type === 'info' ? 'bg-blue-500 text-white' :
+          'bg-gray-500 text-white'
+        }`}>
+          <div className="flex items-center space-x-2">
+            {notification.type === 'success' && <div className="w-5 h-5 bg-white bg-opacity-30 rounded-full flex items-center justify-center">✓</div>}
+            {notification.type === 'error' && <div className="w-5 h-5 bg-white bg-opacity-30 rounded-full flex items-center justify-center">✗</div>}
+            {notification.type === 'info' && <div className="w-5 h-5 bg-white bg-opacity-30 rounded-full flex items-center justify-center">i</div>}
+            <span className="font-medium">{notification.message}</span>
+            <button 
+              onClick={() => setNotification(null)}
+              className="ml-2 text-white hover:text-gray-200"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -184,7 +184,9 @@ const SurveyTable = () => {
       
       if (result.success) {
         setSurveys(result.data.surveys || []);
-        setTotalPages(Math.ceil((result.data.total || 0) / surveysPerPage));
+        // L'API retourne le total dans pagination.totalItems
+        const totalItems = result.data.pagination?.totalItems || 0;
+        setTotalPages(Math.ceil(totalItems / surveysPerPage));
       } else {
         setError('Erreur lors du chargement des enquêtes');
       }
