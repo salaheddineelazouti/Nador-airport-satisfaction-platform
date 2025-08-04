@@ -7,7 +7,7 @@ const DEEPSEEK_API_URL = 'https://api.deepseek.com/v1/chat/completions';
 
 class DeepSeekService {
   constructor() {
-    this.apiKey = process.env.REACT_APP_DEEPSEEK_API_KEY || 'sk-7f75b8f00ddf4ef3bd20d37c9e90a46c';
+    this.apiKey = process.env.REACT_APP_DEEPSEEK_API_KEY || 'API';
     this.baseUrl = DEEPSEEK_API_URL;
     
     if (!this.apiKey || this.apiKey === 'your-deepseek-api-key') {
