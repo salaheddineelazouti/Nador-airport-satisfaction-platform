@@ -1,6 +1,7 @@
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import ondaLogo from '../assets/images/logo-onda.png';
 
 // Fonction pour convertir les clés techniques en labels lisibles
 const getCategoryLabel = (key) => {
@@ -207,41 +208,69 @@ export const exportToPDF = async (dashboardData) => {
       white: [255, 255, 255]
     };
     
-    // En-tête avec design moderne
+    // En-tete avec design moderne
     pdf.setFillColor(...colors.primary);
     pdf.rect(0, 0, 210, 40, 'F');
     
-    // Logo/Titre principal en blanc
-    pdf.setTextColor(255, 255, 255);
-    pdf.setFontSize(24);
-    pdf.setFont('helvetica', 'bold');
-    pdf.text('RAPPORT DE SATISFACTION', 20, 20);
+    // Ajouter le logo ONDA (ameliore)
+    try {
+      pdf.addImage(ondaLogo, 'PNG', 12, 6, 30, 30);
+    } catch (error) {
+      console.log('Logo non disponible:', error);
+    }
     
-    pdf.setFontSize(16);
+    // Logo/Titre principal en blanc (ameliore)
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFontSize(22);  // Legerement plus petit pour equilibrer avec le logo
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('RAPPORT DE SATISFACTION', 50, 18);
+    
+    pdf.setFontSize(14);
     pdf.setFont('helvetica', 'normal');
-    pdf.text('Aeroport Nador Al Aroui - ONDA', 20, 30);
+    pdf.text('Aeroport Nador Al Aroui - ONDA', 50, 26);
+    
+    // Ligne decorative sous le titre
+    pdf.setDrawColor(255, 255, 255);
+    pdf.setLineWidth(0.5);
+    pdf.line(50, 30, 180, 30);
     
     // Bande coloree sous l'en-tete
     pdf.setFillColor(...colors.secondary);
     pdf.rect(0, 40, 210, 5, 'F');
     
-    // Informations generales avec style
-    let yPos = 60;
+    // Informations generales avec style ameliore
+    let yPos = 55;
     pdf.setTextColor(...colors.text);
     pdf.setFontSize(12);
     pdf.setFont('helvetica', 'normal');
     
-    // Boite d'information avec fond colore
-    pdf.setFillColor(...colors.lightGray);
-    pdf.roundedRect(20, yPos - 5, 170, 25, 3, 3, 'F');
+    // Boite d'information avec fond colore et ombre (marges corrigees)
+    const boxWidth = 170;
+    const maxX = 210 - 20; // Largeur page - marge droite
+    const actualBoxWidth = Math.min(boxWidth, maxX - 20); // S'assurer que ca rentre
     
+    pdf.setFillColor(245, 245, 245);  // Gris tres clair
+    pdf.roundedRect(21, yPos - 4, actualBoxWidth, 28, 4, 4, 'F');
+    pdf.setFillColor(...colors.lightGray);
+    pdf.roundedRect(20, yPos - 5, actualBoxWidth, 28, 4, 4, 'F');
+    
+    // Icone et titre
+    pdf.setFillColor(...colors.primary);
+    pdf.circle(30, yPos + 3, 3, 'F');
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFontSize(8);
     pdf.setFont('helvetica', 'bold');
-    pdf.setFontSize(14);
-    pdf.text('INFORMATIONS GENERALES', 25, yPos + 5);
+    pdf.text('i', 29, yPos + 4);
+    
+    pdf.setTextColor(...colors.text);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(13);
+    pdf.text('INFORMATIONS GENERALES', 38, yPos + 4);
+    
     pdf.setFont('helvetica', 'normal');
-    pdf.setFontSize(10);
+    pdf.setFontSize(9);
     pdf.text(`Genere le: ${new Date().toLocaleDateString('fr-FR')} a ${new Date().toLocaleTimeString('fr-FR')}`, 25, yPos + 12);
-    pdf.text(`Nombre total d'enquetes analysees: ${surveys.length}`, 25, yPos + 19);
+    pdf.text(`Nombre total d'enquetes analysees: ${surveys.length}`, 25, yPos + 18);
     
     yPos += 35;
     
@@ -287,29 +316,41 @@ export const exportToPDF = async (dashboardData) => {
           const rating = parseFloat(value);
           const percentage = (rating / 5) * 100;
           
-          // Nom de la catégorie
+          // Nom de la categorie (limite pour eviter debordement)
           pdf.setFont('helvetica', 'normal');
           pdf.setFontSize(10);
           pdf.setTextColor(...colors.text);
           const categoryName = getCategoryLabel(key);
-          pdf.text(categoryName.substring(0, 35) + (categoryName.length > 35 ? '...' : ''), 25, yPos + 5);
+          let displayName = categoryName;
+          if (categoryName.length > 30) {
+            displayName = categoryName.substring(0, 27) + '...';
+          }
+          pdf.text(displayName, 25, yPos + 5);
           
-          // Barre de progression de base (gris)
-          pdf.setFillColor(220, 220, 220);
-          pdf.roundedRect(100, yPos, 70, 8, 2, 2, 'F');
+          // Barre de progression amelioree avec marges corrigees
+          const barStartX = 100;
+          const barWidth = 60; // Reduit pour rester dans les marges
           
-          // Barre de progression colorée selon le score
+          // Ombre de la barre
+          pdf.setFillColor(200, 200, 200);
+          pdf.roundedRect(barStartX + 1, yPos + 1, barWidth, 8, 3, 3, 'F');
+          // Base de la barre
+          pdf.setFillColor(235, 235, 235);
+          pdf.roundedRect(barStartX, yPos, barWidth, 8, 3, 3, 'F');
+          
+          // Barre coloree selon le score
           const barColor = rating >= 4 ? colors.success : 
                           rating >= 3 ? [241, 196, 15] : 
                           colors.accent;
           pdf.setFillColor(...barColor);
-          pdf.roundedRect(100, yPos, (70 * percentage / 100), 8, 2, 2, 'F');
+          const filledWidth = (barWidth * percentage / 100);
+          pdf.roundedRect(barStartX, yPos, filledWidth, 8, 3, 3, 'F');
           
-          // Score numérique
+          // Score numerique
           pdf.setFont('helvetica', 'bold');
           pdf.setFontSize(10);
           pdf.setTextColor(...barColor);
-          pdf.text(`${rating.toFixed(2)}/5`, 175, yPos + 6);
+          pdf.text(`${rating.toFixed(2)}/5`, 165, yPos + 6);
           
           yPos += 15;
         });
@@ -349,9 +390,13 @@ export const exportToPDF = async (dashboardData) => {
       
       dashboardData.distributions.languages.forEach((lang, index) => {
         const percentage = ((lang.count / surveys.length) * 100).toFixed(1);
-        const barWidth = (percentage / 100) * 120; // Largeur proportionnelle
         
-        // Indicateur de couleur (petit carré)
+        // Barres avec marges corrigees
+        const maxBarWidth = 80; // Reduit de 120 a 80
+        const barWidth = (percentage / 100) * maxBarWidth;
+        const barStartX = 90;
+        
+        // Indicateur de couleur (petit carre)
         const langColor = langColors[lang.language.toLowerCase()] || [149, 165, 166];
         pdf.setFillColor(...langColor);
         pdf.roundedRect(25, yPos - 2, 8, 8, 1, 1, 'F');
@@ -365,13 +410,13 @@ export const exportToPDF = async (dashboardData) => {
                         lang.language.toUpperCase() === 'AR' ? 'Arabe' : lang.language.toUpperCase();
         pdf.text(langName, 40, yPos + 4);
         
-        // Barre de progression de base
+        // Barre de progression de base (taille reduite)
         pdf.setFillColor(230, 230, 230);
-        pdf.roundedRect(90, yPos - 1, 120, 6, 2, 2, 'F');
+        pdf.roundedRect(barStartX, yPos - 1, maxBarWidth, 6, 2, 2, 'F');
         
-        // Barre de progression colorée
+        // Barre de progression coloree
         pdf.setFillColor(...langColor);
-        pdf.roundedRect(90, yPos - 1, barWidth, 6, 2, 2, 'F');
+        pdf.roundedRect(barStartX, yPos - 1, barWidth, 6, 2, 2, 'F');
         
         // Pourcentage et nombre
         pdf.setFont('helvetica', 'bold');
@@ -389,13 +434,13 @@ export const exportToPDF = async (dashboardData) => {
     
     yPos += 25;
     
-    // Vérifier si on a besoin d'une nouvelle page
-    if (yPos > 220) {
+    // Verifier si on a besoin d'une nouvelle page pour les enquetes
+    if (yPos > 200) {
       pdf.addPage();
       yPos = 30;
     }
     
-    // Section Dernières Enquêtes avec design moderne
+    // Section Dernieres Enquetes avec design moderne
     pdf.setFillColor(...colors.secondary);
     pdf.rect(20, yPos, 5, 20, 'F');
     
@@ -406,45 +451,50 @@ export const exportToPDF = async (dashboardData) => {
     
     yPos += 30;
     
-    // En-tête du tableau avec style
-    const headerHeight = 12;
+    // En-tete du tableau avec style ameliore et marges corrigees
+    const headerHeight = 14;
+    const tableWidth = 160; // Reduit de 170 a 160
+    // Ombre de l'en-tete
+    pdf.setFillColor(30, 90, 150);
+    pdf.roundedRect(21, yPos - 4, tableWidth, headerHeight, 3, 3, 'F');
+    // En-tete principal
     pdf.setFillColor(...colors.primary);
-    pdf.roundedRect(20, yPos - 5, 170, headerHeight, 2, 2, 'F');
+    pdf.roundedRect(20, yPos - 5, tableWidth, headerHeight, 3, 3, 'F');
     
     pdf.setTextColor(255, 255, 255);
     pdf.setFont('helvetica', 'bold');
-    pdf.setFontSize(10);
-    pdf.text('ID ENQUETE', 25, yPos + 2);
-    pdf.text('DATE', 70, yPos + 2);
-    pdf.text('LANGUE', 110, yPos + 2);
-    pdf.text('SATISFACTION', 145, yPos + 2);
+    pdf.setFontSize(9); // Taille reduite
+    pdf.text('ID ENQUETE', 25, yPos + 3);
+    pdf.text('DATE', 65, yPos + 3);
+    pdf.text('LANGUE', 100, yPos + 3);
+    pdf.text('SATISFACTION', 130, yPos + 3);
     
     yPos += headerHeight + 5;
     
-    const recentSurveys = surveys.slice(0, 6); // 6 dernières enquêtes pour un meilleur rendu
+    const recentSurveys = surveys.slice(0, 6); // 6 dernieres enquetes pour un meilleur rendu
     recentSurveys.forEach((survey, index) => {
       const avgRating = survey.ratings ? 
         Object.values(survey.ratings).reduce((sum, val) => sum + parseFloat(val), 0) / Object.keys(survey.ratings).length 
         : 0;
       
-      // Alternance de couleurs pour les lignes
+      // Alternance de couleurs pour les lignes (largeur corrigee)
       if (index % 2 === 0) {
         pdf.setFillColor(248, 249, 250);
-        pdf.roundedRect(20, yPos - 3, 170, 10, 1, 1, 'F');
+        pdf.roundedRect(20, yPos - 3, 160, 10, 1, 1, 'F'); // 160 au lieu de 170
       }
       
       // Contenu de la ligne
       pdf.setTextColor(...colors.text);
       pdf.setFont('helvetica', 'normal');
-      pdf.setFontSize(9);
+      pdf.setFontSize(8); // Taille reduite
       
       // ID (raccourci)
-      pdf.text(survey.id.slice(0, 8) + '...', 25, yPos + 2);
+      pdf.text(survey.id.slice(0, 6) + '...', 25, yPos + 2);
       
       // Date
-      pdf.text(new Date(survey.submitted_at).toLocaleDateString('fr-FR'), 70, yPos + 2);
+      pdf.text(new Date(survey.submitted_at).toLocaleDateString('fr-FR'), 65, yPos + 2);
       
-      // Langue avec indicateur coloré
+      // Langue avec indicateur colore
       const langColors = {
         'fr': colors.primary,
         'en': colors.success,
@@ -452,27 +502,28 @@ export const exportToPDF = async (dashboardData) => {
       };
       const langColor = langColors[survey.language?.toLowerCase()] || [149, 165, 166];
       pdf.setFillColor(...langColor);
-      pdf.circle(108, yPos, 2, 'F');
+      pdf.circle(103, yPos, 2, 'F'); // Position ajustee
       pdf.setTextColor(...colors.text);
-      pdf.text(survey.language?.toUpperCase() || 'N/A', 113, yPos + 2);
+      pdf.text(survey.language?.toUpperCase() || 'N/A', 105, yPos + 2); // Position ajustee
       
-      // Satisfaction avec couleur
+      // Satisfaction avec couleur (position corrigee)
       const satisfactionColor = avgRating >= 4 ? colors.success : 
                                avgRating >= 3 ? [241, 196, 15] : 
                                colors.accent;
       pdf.setTextColor(...satisfactionColor);
       pdf.setFont('helvetica', 'bold');
-      pdf.text(`${avgRating.toFixed(1)}/5`, 145, yPos + 2);
-      
-      // Indicateur de qualite
-      pdf.setFont('helvetica', 'normal');
       pdf.setFontSize(8);
-      const qualite = avgRating >= 4 ? 'Excellent' : avgRating >= 3 ? 'Bon' : 'A ameliorer';
-      pdf.text(qualite, 168, yPos + 2);
+      pdf.text(`${avgRating.toFixed(1)}/5`, 130, yPos + 2); // Position ajustee
+      
+      // Indicateur de qualite (position dans les marges)
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(7);
+      const qualite = avgRating >= 4 ? 'Exc.' : avgRating >= 3 ? 'Bon' : 'Faible';
+      pdf.text(qualite, 150, yPos + 2); // Position ajustee
       
       yPos += 12;
       
-      // Nouvelle page si nécessaire
+      // Nouvelle page si necessaire
       if (yPos > 270) {
         pdf.addPage();
         yPos = 30;
@@ -507,16 +558,19 @@ export const exportToPDF = async (dashboardData) => {
       pdf.text('Confidentiel - Usage interne uniquement', 20, pageHeight - 5);
     };
     
-    // Ajouter le pied de page à toutes les pages
+    // Ajouter le pied de page a toutes les pages
     const totalPages = pdf.internal.getNumberOfPages();
     for (let i = 1; i <= totalPages; i++) {
       pdf.setPage(i);
       addFooter(i);
     }
     
-    // Télécharger le PDF
+    // Telecharger le PDF
     const fileName = `rapport_satisfaction_nador_${new Date().toISOString().split('T')[0]}.pdf`;
     pdf.save(fileName);
+    
+    console.log(`PDF genere avec succes: ${fileName}`);
+    console.log(`Nombre de pages generees: ${pdf.internal.getNumberOfPages()}`);
     
     return { success: true, fileName };
   } catch (error) {
