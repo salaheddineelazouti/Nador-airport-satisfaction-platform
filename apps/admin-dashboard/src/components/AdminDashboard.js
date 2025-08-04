@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { BarChart3, TrendingUp, FileText, Download, Settings, RotateCcw, LogOut, FileSpreadsheet, FileImage, Database, Bell, Users } from 'lucide-react';
+import { BarChart3, TrendingUp, FileText, Download, Settings, RotateCcw, LogOut, FileSpreadsheet, FileImage, Database, Bell, Users, Brain } from 'lucide-react';
 import ondaLogo from '../assets/images/Logo office national des aeroports.png';
 import LoginModal from './LoginModal';
 import DashboardStats from './DashboardStats';
 import SurveyCharts from './SurveyCharts';
 import SurveyTable from './SurveyTable';
+import AIRecommendations from './AIRecommendations';
 import { exportToExcel, exportToCSV, exportToPDF } from '../utils/exportUtils';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [dashboardData, setDashboardData] = useState(null);
+  const [recentSurveys, setRecentSurveys] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -33,13 +35,23 @@ const AdminDashboard = () => {
       setLoading(true);
       const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
       
-      const response = await fetch(`${apiUrl}/api/analytics/dashboard`);
-      const result = await response.json();
+      // Recuperer les donnees du dashboard et les enquetes recentes en parallele
+      const [dashboardResponse, surveysResponse] = await Promise.all([
+        fetch(`${apiUrl}/api/analytics/dashboard`),
+        fetch(`${apiUrl}/api/surveys?limit=10&page=1`) // 10 enquetes recentes
+      ]);
       
-      if (result.success) {
-        setDashboardData(result.data);
+      const dashboardResult = await dashboardResponse.json();
+      const surveysResult = await surveysResponse.json();
+      
+      if (dashboardResult.success) {
+        setDashboardData(dashboardResult.data);
       } else {
-        setError('Erreur lors du chargement des données: ' + (result.message || 'Inconnue'));
+        setError('Erreur lors du chargement des donnees: ' + (dashboardResult.message || 'Inconnue'));
+      }
+      
+      if (surveysResult.success && surveysResult.data?.surveys) {
+        setRecentSurveys(surveysResult.data.surveys);
       }
     } catch (error) {
       console.error('Erreur API:', error);
@@ -118,9 +130,10 @@ const AdminDashboard = () => {
   const tabs = [
     { id: 'overview', label: 'Vue d\'ensemble', icon: BarChart3 },
     { id: 'charts', label: 'Graphiques', icon: TrendingUp },
-    { id: 'surveys', label: 'Enquêtes', icon: FileText },
+    { id: 'surveys', label: 'Enquetes', icon: FileText },
+    { id: 'recommendations', label: 'Aide IA', icon: Brain },
     { id: 'export', label: 'Export', icon: Download },
-    { id: 'settings', label: 'Paramètres', icon: Settings }
+    { id: 'settings', label: 'Parametres', icon: Settings }
   ];
 
   // Affichage du modal de connexion si non authentifié
@@ -275,6 +288,13 @@ const AdminDashboard = () => {
           
           {activeTab === 'surveys' && (
             <SurveyTable />
+          )}
+          
+          {activeTab === 'recommendations' && (
+            <AIRecommendations 
+              dashboardData={dashboardData} 
+              surveys={recentSurveys}
+            />
           )}
           
           {activeTab === 'export' && (
