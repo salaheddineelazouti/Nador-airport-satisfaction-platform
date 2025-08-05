@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BarChart3, TrendingUp, FileText, Download, Settings, RotateCcw, LogOut, FileSpreadsheet, FileImage, Database, Bell, Users, Brain } from 'lucide-react';
-import ondaLogo from '../assets/images/Logo office national des aeroports.png';
+import airportsOfMoroccoLogo from '../assets/images/airports-of-morocco.png';
 import LoginModal from './LoginModal';
 import DashboardStats from './DashboardStats';
 import SurveyCharts from './SurveyCharts';
@@ -191,8 +191,8 @@ const AdminDashboard = () => {
             <div className="flex items-center space-x-4">
               <div className="w-16 h-16 bg-white rounded-xl shadow-lg flex items-center justify-center p-2">
                 <img 
-                  src={ondaLogo} 
-                  alt="ONDA Logo" 
+                  src={airportsOfMoroccoLogo} 
+                  alt="Airports of Morocco Logo" 
                   className="w-full h-full object-contain"
                 />
               </div>

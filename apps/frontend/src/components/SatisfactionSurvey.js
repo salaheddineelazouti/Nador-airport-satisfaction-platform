@@ -4,7 +4,7 @@ import {
   CheckCircle2,
   Languages
 } from 'lucide-react';
-import ondaLogo from '../assets/images/Logo office national des aeroports.png';
+import airportsOfMoroccoLogo from '../assets/images/airports-of-morocco.png';
 
 import { useLanguage, useSurveyState, useProgressCalculation, useCategoriesWithIcons } from '../hooks';
 import LanguageSelector from './LanguageSelector';
@@ -172,7 +172,7 @@ const SatisfactionSurvey = () => {
           <div className="container mx-auto">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <img src={ondaLogo} alt="ONDA Logo" className="h-10 mr-3" />
+                <img src={airportsOfMoroccoLogo} alt="Airports of Morocco Logo" className="h-10 mr-3" />
                 <div>
                   <h1 className="font-bold text-lg text-gray-800" dir={isRTL ? 'rtl' : 'ltr'}>
                     {t.title}

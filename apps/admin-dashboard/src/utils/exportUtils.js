@@ -1,7 +1,7 @@
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
-import ondaLogo from '../assets/images/logo-onda.png';
+import airportsOfMoroccoLogo from '../assets/images/airports-of-morocco.png';
 
 // Fonction pour convertir les clés techniques en labels lisibles
 const getCategoryLabel = (key) => {
@@ -212,9 +212,9 @@ export const exportToPDF = async (dashboardData) => {
     pdf.setFillColor(...colors.primary);
     pdf.rect(0, 0, 210, 40, 'F');
     
-    // Ajouter le logo ONDA (ameliore)
+    // Ajouter le logo Airports of Morocco (ameliore)
     try {
-      pdf.addImage(ondaLogo, 'PNG', 12, 6, 30, 30);
+      pdf.addImage(airportsOfMoroccoLogo, 'PNG', 12, 6, 30, 30);
     } catch (error) {
       console.log('Logo non disponible:', error);
     }
@@ -227,7 +227,7 @@ export const exportToPDF = async (dashboardData) => {
     
     pdf.setFontSize(14);
     pdf.setFont('helvetica', 'normal');
-    pdf.text('Aeroport Nador Al Aroui - ONDA', 50, 26);
+    pdf.text('Aeroport Nador Al Aroui - Airports of Morocco', 50, 26);
     
     // Ligne decorative sous le titre
     pdf.setDrawColor(255, 255, 255);
@@ -545,7 +545,7 @@ export const exportToPDF = async (dashboardData) => {
       pdf.setFont('helvetica', 'normal');
       
       // Gauche: Informations ONDA
-      pdf.text('Office National Des Aeroports - Aeroport Nador Al Aroui', 20, pageHeight - 15);
+      pdf.text('Airports of Morocco - Aeroport Nador Al Aroui', 20, pageHeight - 15);
       pdf.text(`Rapport genere le ${new Date().toLocaleString('fr-FR')}`, 20, pageHeight - 10);
       
       // Droite: Numéro de page
@@ -615,7 +615,7 @@ export const exportRecommendationsToPDF = async (recommendations, dashboardData,
     
     // Logo ONDA (si disponible)
     pdf.setFontSize(10);
-    pdf.text('ONDA - Office National Des Aeroports', 140, 32);
+    pdf.text('Airports of Morocco', 140, 32);
     
     // Barre decorative
     pdf.setFillColor(...colors.secondary);
@@ -872,7 +872,7 @@ export const exportRecommendationsToPDF = async (recommendations, dashboardData,
       // Informations de bas de page
       pdf.setTextColor(...colors.text);
       pdf.setFontSize(8);
-      pdf.text('ONDA - Office National Des Aeroports', 20, pageHeight - 12);
+      pdf.text('Airports of Morocco', 20, pageHeight - 12);
       pdf.text('Aeroport Nador Al Aroui - Recommandations IA', 20, pageHeight - 8);
       
       // Numero de page
