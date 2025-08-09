@@ -1,12 +1,15 @@
 import { useState } from 'react';
 import { apiRequest } from '../config/api';
 import { validateSurveyData, validateSecurityConstraints } from '../utils/dataValidator';
+import { logger, criticalLogger } from '../utils/logger';
 
 /**
  * Hook pour gérer l'état du questionnaire
+ * @param {string} selectedLanguage - Langue sélectionnée
+ * @param {Function} notifyError - Fonction de notification d'erreur (remplace alert)
  * @returns {Object} État et fonctions pour gérer le questionnaire
  */
-export const useSurveyState = (selectedLanguage = 'fr') => {
+export const useSurveyState = (selectedLanguage = 'fr', notifyError = null) => {
   // États pour la gestion des étapes
   const [currentStep, setCurrentStep] = useState(0);
   const [submitted, setSubmitted] = useState(false);
@@ -75,13 +78,13 @@ export const useSurveyState = (selectedLanguage = 'fr') => {
         comments: surveyData.comments || {}
       };
 
-      console.log('📤 Données préparées pour envoi:', cleanSurveyData);
+      logger.api('POST', '/api/surveys', cleanSurveyData);
       
       // 🛡️ COUCHE 1 : VALIDATION CÔTÉ FRONTEND
       const validation = validateSurveyData(cleanSurveyData);
       
       if (!validation.isValid) {
-        console.error('❌ Validation côté frontend échouée:', validation.errors);
+        logger.validation('Validation côté frontend échouée:', validation.errors);
         throw new Error(`Erreurs de validation : ${validation.errors.map(e => e.message).join(', ')}`);
       }
       
@@ -89,11 +92,11 @@ export const useSurveyState = (selectedLanguage = 'fr') => {
       const securityErrors = validateSecurityConstraints(cleanSurveyData);
       
       if (securityErrors.length > 0) {
-        console.error('🚨 Erreurs de sécurité détectées:', securityErrors);
+        logger.security('Erreurs de sécurité détectées:', securityErrors);
         throw new Error(`Erreurs de sécurité : ${securityErrors.map(e => e.message).join(', ')}`);
       }
       
-      console.log('✅ Toutes les validations côté frontend réussies');
+      logger.success('Toutes les validations côté frontend réussies');
 
       // 📤 ENVOI VERS L'API BACKEND
       const result = await apiRequest('/api/surveys', {
@@ -102,7 +105,7 @@ export const useSurveyState = (selectedLanguage = 'fr') => {
       });
 
       if (result.success) {
-        console.log('Enquête soumise avec succès:', result.data);
+        logger.success('Enquête soumise avec succès:', result.data);
         setSubmitted(true);
         setCurrentStep(3);
         
@@ -112,9 +115,17 @@ export const useSurveyState = (selectedLanguage = 'fr') => {
         throw new Error(result.message || 'Erreur lors de la soumission');
       }
     } catch (error) {
-      console.error('Erreur lors de la soumission:', error);
-      // Gestion d'erreur - afficher un message à l'utilisateur
-      alert('Erreur lors de la soumission de l\'enquête. Veuillez réessayer.');
+      criticalLogger.error('Erreur lors de la soumission:', error);
+      
+      // Utiliser le système de notification au lieu d'alert
+      const errorMessage = error.message || 'Erreur lors de la soumission de l\'enquête. Veuillez réessayer.';
+      
+      if (notifyError) {
+        notifyError(errorMessage, 'Erreur de soumission');
+      } else {
+        // Fallback si pas de système de notification fourni
+        alert(errorMessage);
+      }
     }
   };
   

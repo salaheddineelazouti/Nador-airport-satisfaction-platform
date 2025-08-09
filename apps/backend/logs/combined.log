@@ -184,3 +184,38 @@
 {"level":"info","message":"Modèles synchronisés avec la base de données.","timestamp":"2025-08-04T04:42:37.669Z"}
 {"level":"info","message":"Serveur démarré sur le port 5000","timestamp":"2025-08-04T04:42:37.674Z"}
 {"level":"info","message":"Documentation API disponible sur http://localhost:5000/api-docs","timestamp":"2025-08-04T04:42:37.675Z"}
+{"level":"info","message":"Connexion à la base de données établie avec succès.","timestamp":"2025-08-04T06:48:56.420Z"}
+{"level":"info","message":"Modèles synchronisés avec la base de données.","timestamp":"2025-08-04T06:48:57.137Z"}
+{"level":"info","message":"Serveur démarré sur le port 5000","timestamp":"2025-08-04T06:48:57.145Z"}
+{"level":"info","message":"Documentation API disponible sur http://localhost:5000/api-docs","timestamp":"2025-08-04T06:48:57.146Z"}
+{"level":"info","message":"Connexion à la base de données établie avec succès.","timestamp":"2025-08-04T07:55:37.256Z"}
+{"level":"info","message":"Modèles synchronisés avec la base de données.","timestamp":"2025-08-04T07:55:37.845Z"}
+{"level":"info","message":"Serveur démarré sur le port 5000","timestamp":"2025-08-04T07:55:37.853Z"}
+{"level":"info","message":"Documentation API disponible sur http://localhost:5000/api-docs","timestamp":"2025-08-04T07:55:37.855Z"}
+{"level":"info","message":"Connexion à la base de données établie avec succès.","timestamp":"2025-08-04T09:38:35.495Z"}
+{"level":"info","message":"Modèles synchronisés avec la base de données.","timestamp":"2025-08-04T09:38:36.152Z"}
+{"level":"info","message":"Serveur démarré sur le port 5000","timestamp":"2025-08-04T09:38:36.159Z"}
+{"level":"info","message":"Documentation API disponible sur http://localhost:5000/api-docs","timestamp":"2025-08-04T09:38:36.160Z"}
+{"level":"info","message":"SIGINT reçu, arrêt gracieux du serveur...","timestamp":"2025-08-04T10:01:52.244Z"}
+{"level":"info","message":"Connexion à la base de données établie avec succès.","timestamp":"2025-08-04T10:19:46.256Z"}
+{"level":"info","message":"Modèles synchronisés avec la base de données.","timestamp":"2025-08-04T10:19:46.897Z"}
+{"level":"info","message":"Serveur démarré sur le port 5000","timestamp":"2025-08-04T10:19:46.910Z"}
+{"level":"info","message":"Documentation API disponible sur http://localhost:5000/api-docs","timestamp":"2025-08-04T10:19:46.911Z"}
+{"level":"info","message":"Connexion à la base de données établie avec succès.","timestamp":"2025-08-05T15:51:52.419Z"}
+{"level":"info","message":"Modèles synchronisés avec la base de données.","timestamp":"2025-08-05T15:51:53.609Z"}
+{"level":"info","message":"Serveur démarré sur le port 5000","timestamp":"2025-08-05T15:51:53.617Z"}
+{"level":"info","message":"Documentation API disponible sur http://localhost:5000/api-docs","timestamp":"2025-08-05T15:51:53.625Z"}
+{"level":"info","message":"SIGINT reçu, arrêt gracieux du serveur...","timestamp":"2025-08-05T15:57:40.408Z"}
+{"level":"info","message":"Connexion à la base de données établie avec succès.","timestamp":"2025-08-05T15:57:44.987Z"}
+{"level":"info","message":"Modèles synchronisés avec la base de données.","timestamp":"2025-08-05T15:57:45.544Z"}
+{"level":"info","message":"Serveur démarré sur le port 5000","timestamp":"2025-08-05T15:57:45.558Z"}
+{"level":"info","message":"Documentation API disponible sur http://localhost:5000/api-docs","timestamp":"2025-08-05T15:57:45.562Z"}
+{"level":"info","message":"Connexion à la base de données établie avec succès.","timestamp":"2025-08-09T15:44:00.761Z"}
+{"level":"info","message":"Modèles synchronisés avec la base de données.","timestamp":"2025-08-09T15:44:01.278Z"}
+{"level":"info","message":"Serveur démarré sur le port 5000","timestamp":"2025-08-09T15:44:01.283Z"}
+{"level":"info","message":"Documentation API disponible sur http://localhost:5000/api-docs","timestamp":"2025-08-09T15:44:01.284Z"}
+{"level":"info","message":"SIGINT reçu, arrêt gracieux du serveur...","timestamp":"2025-08-09T15:48:38.539Z"}
+{"level":"info","message":"Connexion à la base de données établie avec succès.","timestamp":"2025-08-09T15:48:42.771Z"}
+{"level":"info","message":"Modèles synchronisés avec la base de données.","timestamp":"2025-08-09T15:48:43.399Z"}
+{"level":"info","message":"Serveur démarré sur le port 5000","timestamp":"2025-08-09T15:48:43.404Z"}
+{"level":"info","message":"Documentation API disponible sur http://localhost:5000/api-docs","timestamp":"2025-08-09T15:48:43.405Z"}

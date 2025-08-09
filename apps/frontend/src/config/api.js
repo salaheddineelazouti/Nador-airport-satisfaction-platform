@@ -1,5 +1,8 @@
+import { logger, criticalLogger } from '../utils/logger';
+
 // 🌐 Configuration dynamique de l'API
 const getApiBaseUrl = () => {
+  logger.debug('Détection de l\'URL de base API');
   // Si variable d'environnement définie, l'utiliser
   if (process.env.REACT_APP_API_URL) {
     return process.env.REACT_APP_API_URL;
@@ -47,8 +50,7 @@ export const buildApiUrl = (endpoint) => {
 export const apiRequest = async (endpoint, options = {}) => {
   const url = buildApiUrl(endpoint);
   
-  console.log('🔗 URL construite:', url);
-  console.log('📋 Configuration de la requête:', { endpoint, options });
+  logger.api(options.method || 'GET', url, options.body ? 'avec données' : '');
   
   const config = {
     headers: API_CONFIG.defaultHeaders,
@@ -60,15 +62,18 @@ export const apiRequest = async (endpoint, options = {}) => {
     const data = await response.json();
     
     if (!response.ok) {
-      throw new Error(data.message || `HTTP error! status: ${response.status}`);
+      const errorMessage = data.message || `HTTP error! status: ${response.status}`;
+      logger.error('Réponse API avec erreur:', { status: response.status, url, message: errorMessage });
+      throw new Error(errorMessage);
     }
     
+    logger.success('Réponse API réussie:', { status: response.status, url });
     return data;
   } catch (error) {
-    console.error('API Request Error:', {
+    criticalLogger.error('Erreur critique API:', error, {
       url,
-      error: error.message,
-      config
+      method: options.method || 'GET',
+      hasBody: !!options.body
     });
     throw error;
   }

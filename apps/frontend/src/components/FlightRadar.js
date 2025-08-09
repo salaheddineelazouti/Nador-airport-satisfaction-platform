@@ -4,19 +4,25 @@ import { Navigation } from 'lucide-react';
 
 const FlightRadar = ({ showFlightRadar, toggleFlightRadar, t, selectedLanguage }) => {
   return (
-    <div className="bg-white rounded-xl shadow-lg p-8 mb-8">
-      <div className="flex items-center justify-between mb-6">
+    <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 lg:p-8 mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 space-y-4 sm:space-y-0">
         <div className="flex items-center space-x-3">
-          <div className="p-2 bg-blue-100 rounded-lg">
-            <Navigation className="w-6 h-6 text-blue-600" />
+          <div className="p-2 bg-blue-100 rounded-lg flex-shrink-0">
+            <Navigation className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
           </div>
-          <h2 className="text-xl font-bold text-gray-800">FlightRadar24 - {t.title} (NDR/GMMW)</h2>
+          <h2 className="text-lg sm:text-xl font-bold text-gray-800 leading-tight">
+            <span className="block sm:inline">FlightRadar24</span>
+            <span className="block sm:inline sm:ml-2 text-base sm:text-xl text-gray-600">
+              {t.title} (NDR/GMMW)
+            </span>
+          </h2>
         </div>
         <button
           onClick={toggleFlightRadar}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm sm:text-base w-full sm:w-auto flex items-center justify-center space-x-2"
         >
-          {showFlightRadar ? t.hide : t.show} {t.radar}
+          <Navigation className="w-4 h-4" />
+          <span>{showFlightRadar ? t.hide : t.show} {t.radar}</span>
         </button>
       </div>
 
@@ -34,7 +40,7 @@ const FlightRadar = ({ showFlightRadar, toggleFlightRadar, t, selectedLanguage }
                 {t.coordinates}
               </p>
             </div>
-            <div className="relative rounded-lg overflow-hidden shadow-lg" style={{ height: '500px' }}>
+            <div className="relative rounded-lg overflow-hidden shadow-lg" style={{ height: 'clamp(300px, 50vh, 500px)' }}>
               <iframe
                 src="https://www.flightradar24.com/simple_index.php?lat=34.9888&lon=-3.0282&z=10&label1=callsign&label2=altspeed&label3=tofrom&size=auto"
                 width="100%"
@@ -43,6 +49,7 @@ const FlightRadar = ({ showFlightRadar, toggleFlightRadar, t, selectedLanguage }
                 allowFullScreen
                 title="FlightRadar24 - Aéroport Al Aroui Nador"
                 className="border-0"
+                loading="lazy"
               />
             </div>
             <div className="mt-2 text-xs text-gray-500 flex justify-between items-center">
@@ -63,7 +70,7 @@ const FlightRadar = ({ showFlightRadar, toggleFlightRadar, t, selectedLanguage }
           </div>
 
           {/* Liens vers les données d'aéroport */}
-          <div className="grid md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="bg-blue-50 p-4 rounded-lg">
               <h4 className="font-semibold text-blue-800 mb-2" dir={selectedLanguage === 'ar' ? 'rtl' : 'ltr'}>
                 {t.airportInfo}

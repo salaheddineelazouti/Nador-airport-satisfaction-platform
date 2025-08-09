@@ -39,7 +39,79 @@ tbody tr {
   }
 }
 
+/* Styles spécifiques mobile */
+@media (max-width: 640px) {
+  /* Optimisation des tableaux sur mobile */
+  .flights-table {
+    font-size: 0.75rem;
+  }
+  
+  .flights-table th,
+  .flights-table td {
+    padding: 0.5rem 0.25rem;
+  }
+  
+  /* Masquer certaines colonnes sur très petit écran */
+  .hide-on-mobile {
+    display: none;
+  }
+  
+  /* Adapter la hauteur de la carte sur mobile */
+  .flight-radar-container {
+    min-height: 250px;
+    max-height: 40vh;
+  }
+  
+  /* Améliorer le touch target des boutons */
+  button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Optimiser l'espacement des éléments */
+  .mobile-spacing {
+    gap: 0.75rem;
+  }
+}
+
+/* Styles pour tablette */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .flights-table {
+    font-size: 0.875rem;
+  }
+  
+  .flight-radar-container {
+    min-height: 300px;
+    max-height: 50vh;
+  }
+}
+
 /* Style pour la carte iframe */
 iframe {
   filter: contrast(1.05) saturate(1.1);
+  transition: opacity 0.3s ease;
+}
+
+/* Animation de chargement pour iframe */
+iframe[loading="lazy"] {
+  opacity: 0.8;
+}
+
+iframe:load {
+  opacity: 1;
+}
+
+/* Amélioration de l'accessibilité tactile */
+@media (hover: none) {
+  button:hover {
+    background-color: inherit;
+  }
+  
+  button:active {
+    transform: scale(0.98);
+  }
+  
+  .flight-link:active {
+    background-color: rgba(59, 130, 246, 0.1);
+  }
 }

@@ -31,7 +31,43 @@ export const languages = {
     flightRadarDesc: 'Vue en direct des vols autour de l\'aéroport Al Aroui Nador (NDR/GMMW)',
     coordinates: 'Coordonnées : 34°59\'21"N, 3°01\'40"W',
     airportInfo: 'Informations de l\'aéroport',
-    usefulLinks: 'Liens utiles en temps réel'
+    usefulLinks: 'Liens utiles en temps réel',
+    // Traductions LiveFlights
+    liveFlights: 'Vols en temps réel',
+    nadorAirport: 'Aéroport de Nador',
+    arrivals: 'Arrivées',
+    departures: 'Départs',
+    arrivalsShort: 'Arr.',
+    departuresShort: 'Dép.',
+    from: 'Provenance',
+    flight: 'Vol',
+    time: 'Heure',
+    status: 'État',
+    updatedEveryMinute: 'Mis à jour chaque minute',
+    poweredBy: 'Propulsé par',
+    // Statuts des vols en français
+    flightStatuses: {
+      landed: 'Atterri',
+      onTime: 'À l\'heure',
+      delayed: 'Retardé',
+      enRoute: 'En route',
+      expected: 'Attendu',
+      departed: 'Parti',
+      boarding: 'Embarquement',
+      checkIn: 'Enregistrement'
+    },
+    // Villes en français
+    cities: {
+      casablanca: 'Casablanca',
+      paris: 'Paris',
+      amsterdam: 'Amsterdam',
+      brussels: 'Bruxelles',
+      madrid: 'Madrid',
+      barcelona: 'Barcelone',
+      frankfurt: 'Francfort',
+      marseille: 'Marseille',
+      nador: 'Nador'
+    }
   },
   ar: {
     code: 'ar',
@@ -65,7 +101,43 @@ export const languages = {
     flightRadarDesc: 'عرض مباشر للرحلات حول مطار الناظور العروي (NDR/GMMW)',
     coordinates: 'الإحداثيات: 34°59\'21"N, 3°01\'40"W',
     airportInfo: 'معلومات المطار',
-    usefulLinks: 'روابط مفيدة في الوقت الفعلي'
+    usefulLinks: 'روابط مفيدة في الوقت الفعلي',
+    // Traductions LiveFlights en arabe
+    liveFlights: 'الرحلات المباشرة',
+    nadorAirport: 'مطار الناظور',
+    arrivals: 'الواصلة',
+    departures: 'المغادرة',
+    arrivalsShort: 'واصل',
+    departuresShort: 'مغادر',
+    from: 'من',
+    flight: 'الرحلة',
+    time: 'الوقت',
+    status: 'الحالة',
+    updatedEveryMinute: 'يُحدث كل دقيقة',
+    poweredBy: 'مدعوم من',
+    // Statuts des vols en arabe
+    flightStatuses: {
+      landed: 'هبط',
+      onTime: 'في الوقت المحدد',
+      delayed: 'متأخر',
+      enRoute: 'في الطريق',
+      expected: 'متوقع',
+      departed: 'غادر',
+      boarding: 'الصعود للطائرة',
+      checkIn: 'تسجيل الوصول'
+    },
+    // Villes en arabe
+    cities: {
+      casablanca: 'الدار البيضاء',
+      paris: 'باريس',
+      amsterdam: 'أمستردام',
+      brussels: 'بروكسل',
+      madrid: 'مدريد',
+      barcelona: 'برشلونة',
+      frankfurt: 'فرانكفورت',
+      marseille: 'مرسيليا',
+      nador: 'الناظور'
+    }
   },
   en: {
     code: 'en',
@@ -99,7 +171,43 @@ export const languages = {
     flightRadarDesc: 'Live view of flights around Al Aroui Nador Airport (NDR/GMMW)',
     coordinates: 'Coordinates: 34°59\'21"N, 3°01\'40"W',
     airportInfo: 'Airport information',
-    usefulLinks: 'Useful real-time links'
+    usefulLinks: 'Useful real-time links',
+    // Traductions LiveFlights en anglais
+    liveFlights: 'Live Flights',
+    nadorAirport: 'Nador Airport',
+    arrivals: 'Arrivals',
+    departures: 'Departures',
+    arrivalsShort: 'Arr.',
+    departuresShort: 'Dep.',
+    from: 'From',
+    flight: 'Flight',
+    time: 'Time',
+    status: 'Status',
+    updatedEveryMinute: 'Updated every minute',
+    poweredBy: 'Powered by',
+    // Statuts des vols en anglais
+    flightStatuses: {
+      landed: 'Landed',
+      onTime: 'On Time',
+      delayed: 'Delayed',
+      enRoute: 'En Route',
+      expected: 'Expected',
+      departed: 'Departed',
+      boarding: 'Boarding',
+      checkIn: 'Check-in'
+    },
+    // Villes en anglais
+    cities: {
+      casablanca: 'Casablanca',
+      paris: 'Paris',
+      amsterdam: 'Amsterdam',
+      brussels: 'Brussels',
+      madrid: 'Madrid',
+      barcelona: 'Barcelona',
+      frankfurt: 'Frankfurt',
+      marseille: 'Marseille',
+      nador: 'Nador'
+    }
   }
 };
 
