@@ -32,231 +32,70 @@ const LiveFlights = ({ t, isRTL }) => {
   // État pour suivre l'onglet actif (arrivées ou départs)
   const [activeTab, setActiveTab] = useState('arrivals');
 
-  // Fonction pour récupérer les données de vols 
-  // CARTE: FlightRadar24 (iframe) - TABLEAU: Données réalistes basées sur les vraies routes NDR
+  // Fonction pour récupérer les données de vols via le proxy backend (résout le problème CORS)
+  // CARTE: FlightRadar24 (iframe) - TABLEAU: Backend proxy → AviationStack API (données réelles)
   const fetchFlightData = useCallback(async () => {
     setLoading(true);
     setError(null);
     
     try {
-      // Tentative d'utilisation d'OpenSky API avec timeout
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout
+      console.log('🛩️ Récupération des données via proxy backend...');
       
-      const response = await fetch(
-        'https://opensky-network.org/api/states/all?lamin=34.5&lamax=35.5&lomin=-3.5&lomax=-2.5',
-        { 
-          signal: controller.signal,
-          mode: 'cors'
-        }
-      );
+      // Appel au proxy backend (pas de problème CORS)
+      const response = await fetch('http://localhost:5000/api/flights', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        timeout: 10000
+      });
       
-      clearTimeout(timeoutId);
-      
-      if (response.ok) {
-        const data = await response.json();
-        const processedFlights = processOpenSkyData(data.states || []);
-        
-        // Si on a des données OpenSky valides, les utiliser
-        if (processedFlights.arrivals.length > 0 || processedFlights.departures.length > 0) {
-          setFlights({
-            arrivals: processedFlights.arrivals,
-            departures: processedFlights.departures
-          });
-          setLoading(false);
-          return;
-        }
+      if (!response.ok) {
+        throw new Error(`Erreur backend: ${response.status} ${response.statusText}`);
       }
       
-      throw new Error('API OpenSky non accessible, utilisation des données de démonstration');
+      const data = await response.json();
+      
+      if (!data.success) {
+        throw new Error(data.error || 'Erreur lors de la récupération des données');
+      }
+      
+      console.log('✈️ Données reçues du backend:', {
+        arrivals: data.data.arrivals.length,
+        departures: data.data.departures.length,
+        source: data.source
+      });
+      
+      // Les données sont déjà traitées par le backend
+      setFlights({
+        arrivals: data.data.arrivals,
+        departures: data.data.departures
+      });
+      
+      // Afficher la source des données
+      if (data.source === 'aviationstack_api') {
+        console.log('✅ Données en temps réel AviationStack');
+      } else if (data.source === 'fallback_realistic') {
+        console.log('🔄 Données de démonstration (API temporairement indisponible)');
+      }
+      
+      setLoading(false);
       
     } catch (err) {
-      console.log('🛩️ Utilisation des données de vol réalistes pour Nador (NDR)');
+      console.error('❌ Erreur lors de la récupération des données:', err.message);
       
-      // Utiliser des données réalistes basées sur les vraies routes de l'aéroport Nador
+      // Afficher message d'erreur
+      setError(`Impossible de récupérer les données de vol: ${err.message}`);
       setFlights({
-        arrivals: generateRealisticFlights(4, 'arrival'),
-        departures: generateRealisticFlights(4, 'departure')
+        arrivals: [],
+        departures: []
       });
       
       setLoading(false);
     }
   }, []);
 
-  // Fonction pour traiter les données OpenSky et les convertir au format attendu
-  const processOpenSkyData = (states) => {
-    const arrivals = [];
-    const departures = [];
-    const airportLat = NADOR_AIRPORT.lat;
-    const airportLng = NADOR_AIRPORT.lng;
-    
-    // Base de données des codes de compagnies pour mieux identifier l'origine
-    const airlineOrigins = {
-      'RYR': 'barcelona', 'RAM': 'casablanca', 'UAE': 'casablanca',
-      'AFR': 'paris', 'TAR': 'casablanca', 'CNM': 'barcelona',
-      'IBE': 'madrid', 'VLG': 'barcelona', 'EZY': 'paris',
-      'TRA': 'amsterdam', 'KLM': 'amsterdam', 'LH': 'frankfurt'
-    };
-    
-    states.forEach((state) => {
-      // Structure des données OpenSky: [icao24, callsign, origin_country, time_position, last_contact, longitude, latitude, baro_altitude, on_ground, velocity, true_track, vertical_rate, sensors, geo_altitude, squawk, spi, position_source]
-      const [icao24, callsign, origin_country, time_position, last_contact, longitude, latitude, baro_altitude, on_ground, velocity, true_track, vertical_rate] = state;
-      
-      if (!callsign || !longitude || !latitude) return;
-      
-      const cleanCallsign = callsign.trim();
-      if (!cleanCallsign) return;
-      
-      // Calculer la distance de l'aéroport (en degrés)
-      const distance = Math.sqrt(
-        Math.pow(latitude - airportLat, 2) + Math.pow(longitude - airportLng, 2)
-      );
-      
-      // Identifier la compagnie aérienne
-      const airlineCode = cleanCallsign.substring(0, 3);
-      const suggestedOrigin = airlineOrigins[airlineCode] || 'casablanca';
-      
-      // Déterminer direction basée sur position géographique
-      let originKey, destinationKey;
-      
-      if (distance < 0.05) {
-        // Très proche de l'aéroport - probablement au sol
-        if (on_ground) {
-          originKey = suggestedOrigin;
-          destinationKey = 'nador';
-        } else {
-          originKey = 'nador';
-          destinationKey = suggestedOrigin;
-        }
-      } else if (latitude > airportLat + 0.1) {
-        // Au nord de Nador - probablement venant d'Europe
-        originKey = ['paris', 'amsterdam', 'brussels'][Math.floor(Math.random() * 3)];
-        destinationKey = 'nador';
-      } else if (latitude < airportLat - 0.1) {
-        // Au sud de Nador - probablement venant du Maroc
-        originKey = 'casablanca';
-        destinationKey = 'nador';
-      } else {
-        // Utiliser suggestion basée sur compagnie
-        originKey = suggestedOrigin;
-        destinationKey = 'nador';
-      }
-      
-      // Créer un vol basé sur les données OpenSky
-      const flight = {
-        id: icao24,
-        flight: {
-          airline: `${airlineCode} ${cleanCallsign.substring(3)}`,
-          number: cleanCallsign
-        },
-        airport: { originKey, destinationKey },
-        statusKey: on_ground ? 'landed' : 
-                   (distance < 0.1 && baro_altitude < 1000) ? 'expected' :
-                   (velocity > 100) ? 'enRoute' : 'onTime',
-        time: {
-          scheduled: new Date(last_contact * 1000).toLocaleTimeString([], { 
-            hour: '2-digit', 
-            minute: '2-digit' 
-          })
-        },
-        altitude: Math.round(baro_altitude || 0),
-        speed: Math.round(velocity || 0)
-      };
-      
-      // Classification arrivée/départ basée sur la position et direction
-      if (distance < 0.3) { // Dans un rayon élargi de l'aéroport
-        if (on_ground || (distance < 0.1 && baro_altitude < 2000)) {
-          arrivals.push({ ...flight, airport: { originKey, destinationKey: 'nador' } });
-        } else {
-          departures.push({ ...flight, airport: { originKey: 'nador', destinationKey } });
-        }
-      }
-    });
-    
-    return { arrivals, departures };
-  };
-  
-  // Fonction pour générer des données réalistes basées sur les vraies routes de Nador (NDR)
-  const generateRealisticFlights = (count, type) => {
-    // Vraies routes et compagnies opérant depuis/vers Nador Al Aroui (NDR)
-    const realRoutes = {
-      arrivals: [
-        { airline: 'Royal Air Maroc', code: 'AT735', originKey: 'casablanca', statusKey: 'onTime' },
-        { airline: 'Ryanair', code: 'FR1902', originKey: 'barcelona', statusKey: 'enRoute' },
-        { airline: 'Air Arabia Maroc', code: '3O213', originKey: 'paris', statusKey: 'delayed' },
-        { airline: 'TUI fly', code: 'TB2534', originKey: 'brussels', statusKey: 'expected' },
-        { airline: 'Transavia', code: 'HV6907', originKey: 'amsterdam', statusKey: 'onTime' },
-        { airline: 'Vueling', code: 'VY1624', originKey: 'barcelona', statusKey: 'landed' },
-        { airline: 'Royal Air Maroc', code: 'AT891', originKey: 'madrid', statusKey: 'enRoute' },
-        { airline: 'Air France', code: 'AF7823', originKey: 'marseille', statusKey: 'expected' }
-      ],
-      departures: [
-        { airline: 'Royal Air Maroc', code: 'AT736', destinationKey: 'casablanca', statusKey: 'boarding' },
-        { airline: 'Ryanair', code: 'FR1903', destinationKey: 'barcelona', statusKey: 'onTime' },
-        { airline: 'Air Arabia Maroc', code: '3O214', destinationKey: 'paris', statusKey: 'departed' },
-        { airline: 'TUI fly', code: 'TB2535', destinationKey: 'brussels', statusKey: 'checkIn' },
-        { airline: 'Transavia', code: 'HV6908', destinationKey: 'amsterdam', statusKey: 'boarding' },
-        { airline: 'Vueling', code: 'VY1625', destinationKey: 'barcelona', statusKey: 'departed' },
-        { airline: 'Royal Air Maroc', code: 'AT892', destinationKey: 'madrid', statusKey: 'onTime' },
-        { airline: 'Air France', code: 'AF7824', destinationKey: 'marseille', statusKey: 'delayed' }
-      ]
-    };
 
-    const routeList = realRoutes[type === 'arrival' ? 'arrivals' : 'departures'];
-    const selectedRoutes = routeList.slice(0, count);
-
-    return selectedRoutes.map((route, i) => {
-      // Générer des heures réalistes (entre 6h et 23h)
-      const baseHour = 6 + Math.floor(Math.random() * 17);
-      const minute = Math.floor(Math.random() * 60);
-      const scheduledTime = `${baseHour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
-
-      return {
-        id: `ndr-${type}-${route.code}-${i}`,
-        flight: {
-          airline: route.airline,
-          number: route.code
-        },
-        airport: {
-          originKey: type === 'arrival' ? route.originKey : 'nador',
-          destinationKey: type === 'arrival' ? 'nador' : route.destinationKey
-        },
-        statusKey: route.statusKey,
-        time: {
-          scheduled: scheduledTime
-        }
-      };
-    });
-  };
-
-  // Fonction pour générer des données fictives de vols (fallback)
-  const generateMockFlights = (count, type) => {
-    const airlines = ['Royal Air Maroc', 'Air Arabia', 'Ryanair', 'TUI fly', 'Transavia'];
-    const cityKeys = ['casablanca', 'paris', 'amsterdam', 'brussels', 'madrid', 'barcelona', 'frankfurt', 'marseille'];
-    const flightNumbers = ['AT123', 'FR456', 'TB789', 'AR234', 'HV567', 'LH901'];
-    const statusKeys = type === 'arrival' 
-      ? ['landed', 'onTime', 'delayed', 'enRoute', 'expected'] 
-      : ['departed', 'onTime', 'delayed', 'boarding', 'checkIn'];
-    
-    return Array(count).fill().map((_, i) => ({
-      id: `mock-${type}-${i}`,
-      flight: {
-        airline: airlines[Math.floor(Math.random() * airlines.length)],
-        number: flightNumbers[Math.floor(Math.random() * flightNumbers.length)]
-      },
-      airport: {
-        originKey: type === 'arrival' ? cityKeys[Math.floor(Math.random() * cityKeys.length)] : 'nador',
-        destinationKey: type === 'arrival' ? 'nador' : cityKeys[Math.floor(Math.random() * cityKeys.length)]
-      },
-      statusKey: statusKeys[Math.floor(Math.random() * statusKeys.length)],
-      time: {
-        scheduled: new Date(Date.now() + (Math.random() * 6 - 3) * 3600000).toLocaleTimeString([], { 
-          hour: '2-digit', 
-          minute: '2-digit' 
-        })
-      }
-    }));
-  };
 
   // Effet pour charger les données au chargement du composant et toutes les minutes
   useEffect(() => {
@@ -473,8 +312,8 @@ const LiveFlights = ({ t, isRTL }) => {
                 <span className="hidden sm:inline mx-2">•</span>
                 <span>
                   {typeof t?.poweredBy === 'string' ? t.poweredBy : "Powered by"} 
-                  <a href="https://www.flightradar24.com" target="_blank" rel="noopener noreferrer" className={`text-blue-600 hover:underline ${isRTL ? 'mr-1' : 'ml-1'}`}>
-                    FlightRadar24
+                  <a href="https://www.aviationstack.com" target="_blank" rel="noopener noreferrer" className={`text-blue-600 hover:underline ${isRTL ? 'mr-1' : 'ml-1'}`}>
+                  AviationStack
                   </a>
                 </span>
               </div>
