@@ -187,8 +187,9 @@ async function startServer() {
 
     // Synchronisation des modèles
     if (process.env.NODE_ENV === 'development') {
-      await sequelize.sync({ alter: true });
-      logger.info('Modèles synchronisés avec la base de données.');
+      // 🔧 TEMPORAIRE: Force sync pour mettre à jour l'ENUM language avec 'am'
+      await sequelize.sync({ force: true });
+      logger.info('⚠️  FORCE SYNC: Modèles recréés avec support Amazighe (am)');
     }
 
     // Démarrage du serveur

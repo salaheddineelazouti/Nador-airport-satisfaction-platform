@@ -1,0 +1,33 @@
+/* Tifinagh Font Support for Amazighe (Tamazight) Language */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Tifinagh&display=swap');
+
+/* Tifinagh font class */
+.tifinagh-font {
+  font-family: 'Noto Sans Tifinagh', 'Noto Sans', Arial, sans-serif;
+}
+
+/* Global Tifinagh support */
+[lang="am"], 
+[data-lang="am"],
+.lang-am {
+  font-family: 'Noto Sans Tifinagh', 'Noto Sans', Arial, sans-serif;
+}
+
+/* Ensure proper rendering for Tifinagh characters */
+.tifinagh-text {
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+  text-rendering: optimizeLegibility;
+  direction: ltr; /* Tifinagh s'écrit de gauche à droite */
+}
+
+/* Specific styling for Tifinagh in UI elements */
+.tifinagh-flag {
+  font-size: 1.2em;
+  line-height: 1;
+}
+
+/* Support for mixed content (Tifinagh + Latin characters) */
+.mixed-tifinagh {
+  font-family: 'Noto Sans Tifinagh', 'Noto Sans', Arial, sans-serif;
+  unicode-bidi: plaintext;
+}

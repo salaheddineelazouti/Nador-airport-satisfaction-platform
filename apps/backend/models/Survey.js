@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
       unique: true
     },
     language: {
-      type: DataTypes.ENUM('fr', 'ar', 'en'),
+      type: DataTypes.ENUM('fr', 'ar', 'en', 'am'),
       allowNull: false,
       defaultValue: 'fr'
     },

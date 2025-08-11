@@ -67,6 +67,45 @@ export const languages = {
       frankfurt: 'Francfort',
       marseille: 'Marseille',
       nador: 'Nador'
+    },
+    // Charts and Analytics translations
+    charts: {
+      noDataAvailable: 'Aucune donnée disponible',
+      loadingData: 'Chargement des données...',
+      satisfactionRatings: 'Évaluations de satisfaction',
+      languageDistribution: 'Répartition par langue',
+      surveyEvolution: 'Évolution des enquêtes',
+      week: 'Semaine',
+      month: 'Mois',
+      quarter: 'Trimestre',
+      performanceMetrics: 'Métriques de performance',
+      overallSatisfaction: 'Satisfaction globale',
+      completedSurveys: 'Enquêtes complétées',
+      activeDaysThisWeek: 'Jours actifs cette semaine',
+      recommendations: 'Recommandations',
+      improvementNeeded: 'Amélioration nécessaire',
+      currentScore: 'Note actuelle',
+      focusRecommended: 'Focus sur cette catégorie recommandé',
+      excellentPerformance: 'Excellente performance globale !',
+      allCategoriesSatisfactory: 'Toutes les catégories ont des scores satisfaisants',
+      // Survey rating categories
+      ratings: {
+        welcome: 'Accueil',
+        comfort: 'Confort',
+        services: 'Services',
+        restaurants: 'Restauration',
+        shops: 'Boutiques',
+        cleanliness: 'Propreté',
+        signage: 'Signalisation'
+      },
+      // Error messages
+      errorLoadingTrends: 'Erreur lors du chargement des tendances',
+      flightDataError: 'Impossible de récupérer les données de vols',
+      connectionError: 'Erreur de connexion',
+      // Notification messages
+      surveySubmittedSuccess: 'Votre enquête a été soumise avec succès !',
+      thankYouDefault: 'Merci !',
+      closeNotification: 'Fermer la notification'
     }
   },
   ar: {
@@ -137,12 +176,53 @@ export const languages = {
       frankfurt: 'فرانكفورت',
       marseille: 'مرسيليا',
       nador: 'الناظور'
+    },
+    // Charts and Analytics translations
+    charts: {
+      noDataAvailable: 'لا توجد بيانات متاحة',
+      loadingData: 'تحميل البيانات...',
+      satisfactionRatings: 'تقييمات الرضا',
+      languageDistribution: 'التوزيع حسب اللغة',
+      surveyEvolution: 'تطور الاستطلاعات',
+      week: 'الأسبوع',
+      month: 'الشهر',
+      quarter: 'الربع',
+      performanceMetrics: 'مقاييس الأداء',
+      overallSatisfaction: 'الرضا العام',
+      completedSurveys: 'الاستطلاعات المكتملة',
+      activeDaysThisWeek: 'الأيام النشطة هذا الأسبوع',
+      recommendations: 'التوصيات',
+      improvementNeeded: 'يحتاج تحسين',
+      currentScore: 'النتيجة الحالية',
+      focusRecommended: 'يُنصح بالتركيز على هذه الفئة',
+      excellentPerformance: 'أداء ممتاز بشكل عام!',
+      allCategoriesSatisfactory: 'جميع الفئات لديها نتائج مرضية',
+      // Survey rating categories
+      ratings: {
+        welcome: 'الاستقبال',
+        comfort: 'الراحة',
+        services: 'الخدمات',
+        restaurants: 'المطاعم',
+        shops: 'المتاجر',
+        cleanliness: 'النظافة',
+        signage: 'اللافتات'
+      },
+      // Error messages
+      errorLoadingTrends: 'خطأ في تحميل الاتجاهات',
+      flightDataError: 'تعذر الحصول على بيانات الرحلات',
+      connectionError: 'خطأ في الاتصال',
+      // Notification messages
+      surveySubmittedSuccess: 'تم إرسال الاستطلاع بنجاح!',
+      thankYouDefault: 'شكراً!',
+      closeNotification: 'إغلاق الإشعار'
     }
   },
+
+  // ENGLISH
   en: {
     code: 'en',
     name: 'English',
-    flag: '🇬🇧',
+    flag: '🇺🇸',
     title: 'Al Aroui Airport - Nador',
     subtitle: 'Passenger satisfaction survey',
     welcomeTitle: 'Welcome to the satisfaction survey',
@@ -153,7 +233,7 @@ export const languages = {
     progress: 'completed',
     show: 'Show',
     hide: 'Hide',
-    radar: 'radar',
+    radar: 'the radar',
     personalInfo: 'Personal information (optional)',
     continueEval: 'Continue to evaluation',
     evaluation: 'Detailed evaluation',
@@ -165,14 +245,14 @@ export const languages = {
     submit: 'Submit evaluation',
     back: 'Back',
     thankYou: 'Thank you for your participation!',
-    thankYouText: 'Your opinion is valuable for improving Al Aroui Nador Airport services.',
+    thankYouText: 'Your opinion is valuable to improve Al Aroui Nador Airport services.',
     newEvaluation: 'New evaluation',
     flightRadarTitle: 'Real-time flight radar - FlightRadar24',
     flightRadarDesc: 'Live view of flights around Al Aroui Nador Airport (NDR/GMMW)',
     coordinates: 'Coordinates: 34°59\'21"N, 3°01\'40"W',
     airportInfo: 'Airport information',
-    usefulLinks: 'Useful real-time links',
-    // Traductions LiveFlights en anglais
+    usefulLinks: 'Real-time useful links',
+    // LiveFlights translations in English
     liveFlights: 'Live Flights',
     nadorAirport: 'Nador Airport',
     arrivals: 'Arrivals',
@@ -185,18 +265,23 @@ export const languages = {
     status: 'Status',
     updatedEveryMinute: 'Updated every minute',
     poweredBy: 'Powered by',
-    // Statuts des vols en anglais
+    // Flight statuses in English
     flightStatuses: {
       landed: 'Landed',
       onTime: 'On Time',
       delayed: 'Delayed',
+      boarding: 'Boarding',
+      departed: 'Departed',
+      cancelled: 'Cancelled',
+      checkIn: 'Check-In',
+      gateChange: 'Gate Change',
+      lastCall: 'Last Call',
       enRoute: 'En Route',
       expected: 'Expected',
-      departed: 'Departed',
-      boarding: 'Boarding',
-      checkIn: 'Check-in'
+      arrived: 'Arrived',
+      scheduled: 'Scheduled'
     },
-    // Villes en anglais
+    // Cities in English
     cities: {
       casablanca: 'Casablanca',
       paris: 'Paris',
@@ -207,6 +292,161 @@ export const languages = {
       frankfurt: 'Frankfurt',
       marseille: 'Marseille',
       nador: 'Nador'
+    },
+    // Charts and Analytics translations
+    charts: {
+      noDataAvailable: 'No data available',
+      loadingData: 'Loading data...',
+      satisfactionRatings: 'Satisfaction ratings',
+      languageDistribution: 'Language distribution',
+      surveyEvolution: 'Survey evolution',
+      week: 'Week',
+      month: 'Month',
+      quarter: 'Quarter',
+      performanceMetrics: 'Performance metrics',
+      overallSatisfaction: 'Overall satisfaction',
+      completedSurveys: 'Completed surveys',
+      activeDaysThisWeek: 'Active days this week',
+      recommendations: 'Recommendations',
+      improvementNeeded: 'Improvement needed',
+      currentScore: 'Current score',
+      focusRecommended: 'Focus on this category recommended',
+      excellentPerformance: 'Excellent overall performance!',
+      allCategoriesSatisfactory: 'All categories have satisfactory scores',
+      // Survey rating categories
+      ratings: {
+        welcome: 'Welcome',
+        comfort: 'Comfort',
+        services: 'Services',
+        restaurants: 'Restaurants',
+        shops: 'Shops',
+        cleanliness: 'Cleanliness',
+        signage: 'Signage'
+      },
+      // Error messages
+      errorLoadingTrends: 'Error loading trends',
+      flightDataError: 'Unable to retrieve flight data',
+      connectionError: 'Connection error',
+      // Notification messages
+      surveySubmittedSuccess: 'Your survey has been submitted successfully!',
+      thankYouDefault: 'Thank you!',
+      closeNotification: 'Close notification'
+    }
+  },
+
+  // AMAZIGHE (TAMAZIGHT) avec Tifinagh
+  am: {
+    code: 'am',
+    name: 'ⵜⴰⵎⴰⵣⵉⵖⵜ', // Tamazight en tifinagh
+    flag: 'ⵣ', // Symbole amazighe traditionnel
+    title: 'ⴰⵙⴰⵎⵓⵔ ⵏ ⵍⴰⵔⵓⵉ - ⵏⴰⴷⵓⵔ',
+    subtitle: 'ⴰⵙⴰⵎⵓⵔ ⵏ ⵓⵙⴰⵍⴰⵍ ⵏ ⵢⵉⵎⴳⴰⵏ',
+    welcomeTitle: 'ⴰⵏⵙⵓⴼ ⵙ ⵓⵙⴰⵎⵓⵔ ⵏ ⵓⵙⴰⵍⴰⵍ',
+    welcomeText: 'ⴰⵔⴰⵢ ⵏⵏⵓⵏ ⵉⵙⴰⵖ! ⴰⵙⵉⵙⵏ ⵖⵔ ⴰⵙⵏⴼⴰⵍ ⵏ ⵓⵎⵓⵙⵙⵓ ⵏⵏⵓⵏ ⵉⴳ ⴰⵙⴰⵎⵓⵔ ⵍⴰⵔⵓⵉ ⵏ ⵏⴰⴷⵓⵔ.',
+    selectLanguage: 'ⴷⴷⵖ ⵜⴰⵎⴰⵣⵉⵖⵜ ⵏⵏⵓⵏ',
+    continue: 'ⴽⴽⵛⵎ',
+    flightRadar: 'ⴰⵔⴰⴷⴰⵔ ⵏ ⵢⵉⵜⵓⴳⵏⵏⵓⵔⵜⵏ',
+    progress: 'ⵉⵎⵎⴰⵔ',
+    show: 'ⵙⵙⴽⵏ',
+    hide: 'ⵙⴹⴰⵕ',
+    radar: 'ⴰⵔⴰⴷⴰⵔ',
+    personalInfo: 'ⵜⵓⵍⴰⵥ ⵜⵉⵎⴰⵡⴰⵍⵉⵏ (ⴰⵡⴷ ⵓⵔ ⵉⵍⵍⵉⵏ)',
+    continueEval: 'ⴽⴽⵛⵎ ⵖⵔ ⵓⵙⴰⵍⴰⵍ',
+    evaluation: 'ⴰⵙⴰⵍⴰⵍ ⴰⵎⴰⵏ',
+    globalEval: 'ⴰⵙⴰⵍⴰⵍ ⴰⵎⴰⵎⴰⵙ',
+    globalSatisfaction: 'ⴰⴷⵓⵔⵉⵖⵏ ⴰⵎⴰⵜⴰⵢ ⵏ ⵓⵎⵓⵙⵙⵓ ⵏⵏⵓⵏ',
+    recommendation: 'ⴰⵔ ⴰⴷ ⵜⴰⵏⵎⴰⵍⵓⴷ ⴰⵙⴰⵎⵓⵔ ⴰ?',
+    comments: 'ⵜⵡⴰⵏⴳⵉⵎⵉⵏ ⵢⴰⴹⵏ ⵉ ⵓⵜⴼⴰⵔⴰⵙ ⴰ:',
+    generalComments: 'ⵜⵡⴰⵏⴳⵉⵎⵉⵏ ⵉⵎⴰⵎⴰⵙⵏ ⵏⵖ ⵉⵙⵙⵓⵎⴰⵔ ⵏ ⵓⵙⵏⴼⵍ:',
+    submit: 'ⴰⵣⵏ ⴰⵙⴰⵍⴰⵍ',
+    back: 'ⴰⵖⵓⵍ',
+    thankYou: 'ⵜⴰⵏⵎⵎⵉⵔⵜ ⵖⴼ ⵓⴷⵔⴰⵡ ⵏⵏⵓⵏ!',
+    thankYouText: 'ⴰⵔⴰⵢ ⵏⵏⵓⵏ ⵉⵙⴰⵖ ⵉ ⵓⵙⵏⴼⵍ ⵏ ⵜⵉⵡⵓⵔⵉⵡⵉⵏ ⵏ ⵓⵙⴰⵎⵓⵔ ⵍⴰⵔⵓⵉ ⵏ ⵏⴰⴷⵓⵔ.',
+    newEvaluation: 'ⴰⵙⴰⵍⴰⵍ ⴰⵎⴰⵢⵏⵓ',
+    flightRadarTitle: 'ⴰⵔⴰⴷⴰⵔ ⵏ ⵢⵉⵜⵓⴳⵏⵏⵓⵔⵜⵏ ⴰⵙⵔⵉⴷⵏ - FlightRadar24',
+    flightRadarDesc: 'ⵜⴰⵎⵓⵖⵍⵉ ⵜⴰⵙⵔⵉⴷⵜ ⵏ ⵢⵉⵜⵓⴳⵏⵏⵓⵔⵜⵏ ⴳ ⵜⵎⵏⴰⴹⵜ ⵏ ⵓⵙⴰⵎⵓⵔ ⵍⴰⵔⵓⵉ ⵏⴰⴷⵓⵔ',
+    coordinates: 'ⴰⴷⵖⴰⵔⵏ: 34°59\'21"N, 3°01\'40"W',
+    airportInfo: 'ⵜⵓⵍⵖⵓⵜⵉⵏ ⵖⴼ ⵓⵙⴰⵎⵓⵔ',
+    usefulLinks: 'ⵉⵙⵖⵓⵏⵏ ⵉⵎⵓⴼⵉⴷⵏ ⴰⵙⵔⵉⴷⵏ',
+    // LiveFlights translations in Tamazight
+    liveFlights: 'ⵜⵉⵜⵓⴳⵏⵏⵓⵔⵜⵏ ⵜⵉⵙⵔⵉⴷⵉⵏ',
+    nadorAirport: 'ⴰⵙⴰⵎⵓⵔ ⵏ ⵏⴰⴷⵓⵔ',
+    arrivals: 'ⴰⵙⵉⵡⵍ',
+    departures: 'ⴰⵙⴳⴳⵯⵛ',
+    arrivalsShort: 'ⴰⵙⵉⵡ.',
+    departuresShort: 'ⴰⵙⴳ.',
+    from: 'ⵙⴳ',
+    flight: 'ⴰⵜⵓⴳ',
+    time: 'ⴰⴽⵓⴷ',
+    status: 'ⴰⴷⴷⴰⴷ',
+    updatedEveryMinute: 'ⵉⵜⵜⵓⵙⵙⴷⵖ ⴽⵓ ⵜⵉⵙⴷⵉⴷⵜ',
+    poweredBy: 'ⵉⴳⴰ ⵙ',
+    // Flight statuses in Tamazight
+    flightStatuses: {
+      landed: 'ⵉⴽⵛⵎ',
+      onTime: 'ⴳ ⵡⴰⴽⵓⴷ',
+      delayed: 'ⵉⵣⵔⵉ',
+      boarding: 'ⴰⴳⴳⴰⴳ',
+      departed: 'ⵉⴼⴼⵖ',
+      cancelled: 'ⵉⵜⵜⵓⵙⵎⵣ',
+      checkIn: 'ⴰⵙⴰⴷⵓⴷ',
+      gateChange: 'ⴰⵙⵏⴼⵍ ⵏ ⵜⵎⴰⵔⵜ',
+      lastCall: 'ⴰⵙⵏⵖⴰ ⴰⵎⴳⴳⴰⵔⵓ',
+      enRoute: 'ⴳ ⵓⴱⵔⵉⴷ',
+      expected: 'ⵉⵜⵜⵓⵔⴰⵊⴰ',
+      arrived: 'ⵢⵓⵙⴰ',
+      scheduled: 'ⵉⵜⵜⵓⵖⵏ'
+    },
+    // Cities in Tamazight
+    cities: {
+      casablanca: 'ⴰⵏⴼⴰ',
+      paris: 'ⴱⴰⵔⵉⵙ',
+      amsterdam: 'ⴰⵎⵙⵜⵉⵔⴷⴰⵎ',
+      brussels: 'ⴱⵔⵓⴽⵙⵉⵍ',
+      madrid: 'ⵎⴰⴷⵔⵉⴷ',
+      barcelona: 'ⴱⴰⵔⵙⴰⵍⵓⵏⴰ',
+      frankfurt: 'ⴼⵔⴰⵏⴽⴼⵓⵔⵜ',
+      marseille: 'ⵎⴰⵔⵙⵉⵢⴰ',
+      nador: 'ⵏⴰⴷⵓⵔ'
+    },
+    // Charts and Analytics translations
+    charts: {
+      noDataAvailable: 'ⵓⵔ ⵍⵍⵉⵏ ⵉⵙⴼⴽⴰ',
+      loadingData: 'ⴰⵙⵙⴰⵍⵉ ⵏ ⵉⵙⴼⴽⴰ...',
+      satisfactionRatings: 'ⵜⵉⵎⵉⵣⵉ ⵏ ⵓⴷⵓⵔⵉⵖ',
+      languageDistribution: 'ⴰⵙⵎⵣⴰⵣⴰⵍ ⵙ ⵜⵎⴰⵣⵉⵖⵉⵏ',
+      surveyEvolution: 'ⴰⵙⴱⵓⵖⵍⵓ ⵏ ⵉⵙⴰⵎⵓⵔⵏ',
+      week: 'ⵉⵎⴰⵍⴰⵙⵙ',
+      month: 'ⴰⵢⵢⵓⵔ',
+      quarter: 'ⴰⴽⵯⵕⴰⴹ',
+      performanceMetrics: 'ⵜⵉⵎⵉⵣⵉ ⵏ ⵓⵎⵓⴷⵓ',
+      overallSatisfaction: 'ⴰⴷⵓⵔⵉⵖ ⴰⵎⴰⵜⴰⵢ',
+      completedSurveys: 'ⵉⵙⴰⵎⵓⵔⵏ ⵉⵎⵎⴰⵔⵏ',
+      activeDaysThisWeek: 'ⵓⵙⵙⴰⵏ ⵉⵔⵎⴰⵏ ⵙ ⵉⵎⴰⵍⴰⵙⵙ ⴰ',
+      recommendations: 'ⵉⵙⵙⵓⵎⴰⵔ',
+      improvementNeeded: 'ⵉⵙⵙⴰ ⴰⵙⵏⴼⵍ',
+      currentScore: 'ⴰⵎⵉⵣ ⵏ ⵜⵓⵔⴰ',
+      focusRecommended: 'ⵉⵜⵜⵓⵙⵙⵓⵎⴰⵔ ⵓⴼⵓⵙ ⵖⴼ ⵜⴰⵔⴰⴱⴱⵓⵜ ⴰ',
+      excellentPerformance: 'ⴰⵎⵓⴷⵓ ⵉⵇⵇⵓⵔⴰⵏ!',
+      allCategoriesSatisfactory: 'ⴰⴽⴽ ⵜⴰⵔⴰⴱⴱⵓⵜⵉⵏ ⵙⵄⴰⵏⵜ ⵉⵎⵉⵣⵉ ⵉⵇⵇⵓⵔⴰⵏ',
+      // Survey rating categories
+      ratings: {
+        welcome: 'ⴰⵏⵙⵓⴼ',
+        comfort: 'ⴰⵢⵏⵏⴰⵢ',
+        services: 'ⵜⵉⵎⴰⵙⵙⵉⵔⵉⵏ',
+        restaurants: 'ⵉⵎⴰⴽⴽⴰⵢⵏ',
+        shops: 'ⵜⵉⵃⴰⵏⵓⵜⵉⵏ',
+        cleanliness: 'ⴰⵣⵣⴳ',
+        signage: 'ⵜⵉⵎⴰⵜⴰⵔ'
+      },
+      // Error messages
+      errorLoadingTrends: 'ⴰⵣⴳⵍ ⴳ ⵓⵙⵙⴰⵍⵉ ⵏ ⵉⵙⵓⵖⵍⵏ',
+      flightDataError: 'ⵓⵔ ⵉⵣⵎⵔ ⴰⴷ ⵉⴱⴰⴹⴰ ⵉⵙⴼⴽⴰ ⵏ ⵜⵉⵜⵓⴳⵏⵏⵓⵔⵜⵏ',
+      connectionError: 'ⴰⵣⴳⵍ ⴳ ⵓⵏⵜⵔⵏⵉⵜ',
+      // Notification messages
+      surveySubmittedSuccess: 'ⵉⵜⵜⵓⴰⵣⵏ ⵓⵙⴰⵎⵓⵔ ⵏⵏⵓⵏ ⵙ ⵓⵎⵓⴼⵓⵔ!',
+      thankYouDefault: 'ⵜⴰⵏⵎⵎⵉⵔⵜ!',
+      closeNotification: 'ⴷⵍ ⵜⵉⵏⵎⵍ'
     }
   }
 };
@@ -347,6 +587,51 @@ export const getQuestionsByLanguage = (categoryId, selectedLanguage) => {
         'Courtesy and helpfulness of airport staff',
         'Availability of service desk'
       ]
+    },
+    am: {
+      'acces_terminal': [
+        'ⴰⵡⴷ ⵏ ⵓⴽⵛⵛⵎ ⵖⵔ ⵓⵙⴰⵎⵓⵔ',
+        'ⵜⵉⵖⴰⵔⵉⵏ ⵏ ⵓⵏⵖⴰⵍ ⵖⴼ ⵓⴽⴰⵍ',
+        'ⵜⵉⵎⴰⵜⴰⵔ ⵉ ⵓⴽⵛⵛⵎ ⵖⵔ ⵜⵙⵖⵓⵏⵜ',
+        'ⴰⵢⵢⴰⵡ ⵏ ⵓⴷⴷⵓⴷ ⴳ ⵜⵙⵖⵓⵏⵜ',
+        'ⴰⵡⴷ ⵏ ⵓⵙⴰⵔⵓⵜ ⴳ ⵓⵙⴰⵎⵓⵔ',
+        'ⴰⴳⴳⵯⵔⵏ ⴰⵎⴰⵜⴰⵢ ⵏ ⵓⵙⴰⵎⵓⵔ'
+      ],
+      'enregistrement_controles': [
+        'ⴰⵡⴷ ⵏ ⵓⴼⴼⵓ ⵏ ⵜⵎⵏⴰⴹⵜ ⵏ ⵓⵙⴰⴷⵓⴷ',
+        'ⴰⴽⵓⴷ ⵏ ⵓⵔⴰⵊⵓ ⴳ ⵓⵙⴰⴷⵓⴷ',
+        'ⴰⴷⵓⵔⵉⵖ ⴷ ⵓⵎⵓⵙⵏⴰⵡ ⵏ ⵢⵉⵎⴰⵎⴰⴽⵏ ⵏ ⵓⵙⴰⴷⵓⴷ',
+        'ⴰⵡⴷ ⵏ ⵓⵣⵔⵉ ⵖⴼ ⵓⵙⵖⵏ ⵏ ⵜⴰⴼⵍⵙⵜ',
+        'ⴰⵔⵣⵓⵖ/ⴰⵎⵓⴷⵓ ⵏ ⵓⵙⵖⵏ ⵏ ⵜⴰⴼⵍⵙⵜ',
+        'ⴰⴽⵓⴷ ⵏ ⵓⵔⴰⵊⵓ ⴳ ⵓⵙⵖⵏ ⵏ ⵜⴰⴼⵍⵙⵜ',
+        'ⴰⴷⵓⵔⵉⵖ ⴷ ⵓⵎⵓⵙⵏⴰⵡ ⵏ ⵢⵉⵎⴰⵎⴰⴽⵏ ⵏ ⵜⴰⴼⵍⵙⵜ',
+        'ⴰⴽⵓⴷ ⵏ ⵓⵔⴰⵊⵓ ⴳ ⵓⵙⵖⵏ ⵏ ⵜⴷⴰⵡⵜⵉⵔⵉⵏ',
+        'ⴰⴷⵓⵔⵉⵖ ⴷ ⵓⵎⵓⵙⵏⴰⵡ ⵏ ⵢⵉⵎⴰⵎⴰⴽⵏ ⵏ ⵓⵙⵖⵏ ⵏ ⵜⴷⴰⵡⵜⵉⵔⵉⵏ'
+      ],
+      'zones_attente': [
+        'ⴰⵢⴷⴷ ⵏ ⵢⵉⴽⵔⴰⵙⵏ ⴳ ⵡⴰⵏⵙⵉⵡⵏ ⵏ ⵜⵓⵙⵙⴽⵜ',
+        'ⴰⵢⵏⵏⴰⵢ ⵏ ⵜⴼⴰⵔⵉⵏ ⵏ ⵓⵔⴰⵊⵓ ⴳ ⵡⴰⵏⵙⵉⵡⵏ ⵏ ⵜⵓⵙⵙⴽⵜ',
+        'ⴰⵢⴷⴷ ⵏ ⵉⵏⵖⵎⵉⵙⵏ ⵖⴼ ⵜⵉⵜⵓⴳⵏⵏⵓⵔⵜⵏ',
+        'ⴰⵡⴷ ⵏ ⵓⴼⵜⵜⴰⵛ'
+      ],
+      'services_commodites': [
+        'ⵉⵎⴰⴽⴽⴰⵢⵏ, ⵉⴱⴰⵔⵏ, ⵉⵎⴰⴽⴰⴼⵢⵏ',
+        'ⴰⵏⵙⴱⴷⴷ ⵏ ⵜⵖⴰⵔⴰ/ⴰⵡⵜⵉ ⵏ ⵉⵎⴰⴽⴽⴰⵢⵏ, ⵉⴱⴰⵔⵏ, ⵉⵎⴰⴽⴰⴼⵢⵏ',
+        'ⵜⵉⵃⴰⵏⵓⵜⵉⵏ',
+        'ⴰⵏⵙⴱⴷⴷ ⵏ ⵜⵖⴰⵔⴰ/ⴰⵡⵜⵉ ⵏ ⵜⵃⴰⵏⵓⵜⵉⵏ',
+        'ⴰⴷⵓⵔⵉⵖ ⴷ ⵓⵎⵓⵙⵏⴰⵡ ⵏ ⵢⵉⵎⴰⵎⴰⴽⵏ ⵏ ⵜⵃⴰⵏⵓⵜⵉⵏ ⴷ ⵉⵎⴰⴽⴽⴰⵢⵏ',
+        'ⵜⵖⴰⵔⴰ ⵏ ⵜⴰⵎⴰⵙⵙⵉⵔⵜ ⵏ WiFi'
+      ],
+      'hygiene_infrastructure': [
+        'ⴰⵣⵣⴳ ⵏ ⵜⵙⵖⵓⵏⵜ ⵏ ⵓⵙⴰⵎⵓⵔ',
+        'ⴰⵣⵣⴳ ⵏ ⵡⴰⵏⵙⵉⵡⵏ ⵏ ⵜⵙⵓⴼⵜ',
+        'ⴰⵢⴷⴷ ⵏ ⵡⴰⵏⵙⵉⵡⵏ ⵏ ⵜⵙⵓⴼⵜ',
+        'ⵜⴰⴼⵍⵙⵜ ⵏ ⵜⴷⵓⵙⵉ'
+      ],
+      'personnel_service': [
+        'ⴰⴷⵓⵔⵉⵖ ⴷ ⵓⵎⵓⵙⵏⴰⵡ ⵏ ⵢⵉⵎⴰⵎⴰⴽⵏ ⵏ ⵓⵙⴰⵎⵓⵔ',
+        'ⴰⵢⴷⴷ ⵏ ⵓⵎⴰⴷ ⵏ ⵜⴰⵎⴰⵙⵙⵉⵔⵜ'
+      ]
     }
   };
   
@@ -378,6 +663,14 @@ export const getCategoryTitles = (selectedLanguage) => {
       'services_commodites': 'Services & Amenities',
       'hygiene_infrastructure': 'Hygiene & Infrastructure',
       'personnel_service': 'Staff & Global Service'
+    },
+    am: {
+      'acces_terminal': 'ⴰⴽⵛⵛⵎ ⴷ ⵜⵙⵖⵓⵏⵜ',
+      'enregistrement_controles': 'ⴰⵙⴰⴷⵓⴷ ⴷ ⵓⵙⵖⵏ',
+      'zones_attente': 'ⴰⵏⵙⵉⵡⵏ ⵏ ⵓⵔⴰⵊⵓ ⴷ ⵜⵓⵙⵙⴽⵜ',
+      'services_commodites': 'ⵜⵉⵎⴰⵙⵙⵉⵔⵉⵏ ⴷ ⵜⵉⴱⵔⵉⴽⵉⵏ',
+      'hygiene_infrastructure': 'ⴰⵣⵣⴳ ⴷ ⵜⴰⵏⴰⴼⵍⵓⵜ',
+      'personnel_service': 'ⵉⵎⴰⵎⴰⴽⵏ ⴷ ⵜⴰⵎⴰⵙⵙⵉⵔⵜ ⵜⴰⵎⴰⵜⴰⵢⵜ'
     }
   };
   return titles[selectedLanguage] || titles.fr;
@@ -483,6 +776,39 @@ export const getFormLabels = (selectedLanguage) => {
         'regulier': 'Regular (3-6 times/year)',
         'frequent': 'Frequent (6+ times/year)'
       }
+    },
+    am: {
+      ageGroup: 'ⵜⴰⵔⴰⴱⴱⵓⵜ ⵏ ⵓⵙⴳⴳⵯⴰⵙ',
+      nationality: 'ⵜⴰⵎⵓⵔⵜ',
+      travelPurpose: 'ⵜⵉⵏⵏⴰ ⵏ ⵓⵏⵎⵓⴳⴳⵓ',
+      frequency: 'ⴰⵙⵉⴽⴽⵉⵍ ⵏ ⵓⵏⵎⵓⴳⴳⵓ',
+      select: 'ⴼⵔⵏ',
+      ages: {
+        '18-25': '18-25 ⵏ ⵢⵓⵙⴳⴳⵯⴰⵙⵏ',
+        '26-35': '26-35 ⵏ ⵢⵓⵙⴳⴳⵯⴰⵙⵏ',
+        '36-50': '36-50 ⵏ ⵢⵓⵙⴳⴳⵯⴰⵙⵏ',
+        '51-65': '51-65 ⵏ ⵢⵓⵙⴳⴳⵯⴰⵙⵏ',
+        '65+': 'ⵓⴳⴳⴰⵔ ⵏ 65 ⵏ ⵢⵓⵙⴳⴳⵯⴰⵙⵏ'
+      },
+      nationalities: {
+        'marocaine': 'ⴰⵎⵖⵔⵉⴱⵉ',
+        'francaise': 'ⴰⴼⵔⴰⵏⵙⴰⵡⵉ',
+        'espagnole': 'ⴰⵙⴱⴰⵏⵢⵓⵍⵉ',
+        'allemande': 'ⴰⵍⵎⴰⵏⵉ',
+        'autre': 'ⴰⵢⴹ'
+      },
+      purposes: {
+        'tourisme': 'ⴰⵙⵙⴰⴼⴰⵔ',
+        'affaires': 'ⵜⵉⵡⵓⵔⵉⵡⵉⵏ',
+        'famille': 'ⴰⵔⵣⵓ ⵏ ⵜⴰⵡⵊⵊⵉⵜ',
+        'autre': 'ⴰⵢⴹ'
+      },
+      frequencies: {
+        'premiere': 'ⵜⵉⴽⴽⵍⵜ ⵜⴰⵎⵣⵡⴰⵔⵓⵜ',
+        'occasionnel': 'ⴽⵔⴰ ⵏ ⵜⵉⴽⴽⴰⵍ (1-2 ⵏ ⵜⵉⴽⴽⴰⵍ/ⴰⵙⴳⴳⵯⴰⵙ)',
+        'regulier': 'ⵙ ⵓⵥⵍⴰⵢ (3-6 ⵏ ⵜⵉⴽⴽⴰⵍ/ⴰⵙⴳⴳⵯⴰⵙ)',
+        'frequent': 'ⴰⵟⵟⴰⵙ (ⵓⴳⴳⴰⵔ ⵏ 6 ⵏ ⵜⵉⴽⴽⴰⵍ/ⴰⵙⴳⴳⵯⴰⵙ)'
+      }
     }
   };
   return labels[selectedLanguage] || labels.fr;
@@ -501,6 +827,10 @@ export const getPlaceholders = (selectedLanguage) => {
     en: {
       suggestions: "Your suggestions or comments...",
       generalComments: "Share your general impressions and suggestions..."
+    },
+    am: {
+      suggestions: "ⵉⵙⵙⵓⵎⴰⵔ ⵏⵏⵓⵏ ⵏⵖ ⵜⵡⴰⵏⴳⵉⵎⵉⵏ ⵏⵏⵓⵏ...",
+      generalComments: "ⴼⴽⴰⵜ ⵉⵙ ⵉⵙⵙⵓⵎⴰⵔ ⵉⵎⴰⵎⴰⵙⵏ ⴷ ⵉⵙⵙⵓⵎⴰⵔ ⵏ ⵓⵙⵏⴼⵍ..."
     }
   }[selectedLanguage] || {
     suggestions: "Vos suggestions ou remarques...",

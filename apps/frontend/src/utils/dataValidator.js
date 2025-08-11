@@ -5,7 +5,7 @@
 
 // Définitions centralisées des valeurs acceptées
 const VALIDATION_RULES = {
-  LANGUAGES: ['fr', 'ar', 'en'],
+  LANGUAGES: ['fr', 'ar', 'en', 'am'],
   AGE_RANGES: ['18-25', '26-35', '36-50', '51-65', '65+'],
   TRAVEL_PURPOSES: ['tourisme', 'affaires', 'famille', 'autre'],
   FREQUENCIES: ['premiere', 'occasionnel', 'regulier', 'frequent'],

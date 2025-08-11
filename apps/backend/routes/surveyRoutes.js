@@ -40,7 +40,7 @@ const surveyLimiter = rateLimit({
  *       properties:
  *         language:
  *           type: string
- *           enum: [fr, ar, en]
+ *           enum: [fr, ar, en, am]
  *         personalInfo:
  *           type: object
  *           properties:
@@ -89,7 +89,7 @@ router.post('/',
   [
     // 📋 VALIDATIONS EXPRESS-VALIDATOR EXISTANTES
     body('language')
-      .isIn(['fr', 'ar', 'en'])
+      .isIn(['fr', 'ar', 'en', 'am'])
       .withMessage('Langue non supportée'),
     body('ratings')
       .isObject()
@@ -279,7 +279,7 @@ router.post('/',
  *         name: language
  *         schema:
  *           type: string
- *           enum: [fr, ar, en]
+ *           enum: [fr, ar, en, am]
  *       - in: query
  *         name: dateFrom
  *         schema:

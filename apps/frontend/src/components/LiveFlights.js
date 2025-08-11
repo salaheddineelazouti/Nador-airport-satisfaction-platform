@@ -10,6 +10,8 @@ import './LiveFlights.css';
  * @returns {JSX.Element} Composant LiveFlights
  */
 const LiveFlights = ({ t, isRTL }) => {
+  // Direction RTL passée en paramètre (calculée dans le composant parent)
+
   // Position de l'aéroport de Nador
   const NADOR_AIRPORT = {
     lat: 34.9888,
@@ -283,8 +285,8 @@ const LiveFlights = ({ t, isRTL }) => {
                 }`}
                 onClick={() => setActiveTab('arrivals')}
               >
-                <div className={`flex justify-center items-center ${isRTL ? 'flex-row-reverse' : ''}`}>
-                  <ArrowDown className={`h-3 w-3 sm:h-4 sm:w-4 ${isRTL ? 'ml-1' : 'mr-1'}`} />
+                <div className={`flex justify-center items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                  <ArrowDown className="h-3 w-3 sm:h-4 sm:w-4" />
                   <span className="hidden sm:inline">{typeof t?.arrivals === 'string' ? t.arrivals : "Arrivals"}</span>
                   <span className="sm:hidden">{typeof t?.arrivalsShort === 'string' ? t.arrivalsShort : "Arr."}</span>
                 </div>
@@ -295,8 +297,8 @@ const LiveFlights = ({ t, isRTL }) => {
                 }`}
                 onClick={() => setActiveTab('departures')}
               >
-                <div className={`flex justify-center items-center ${isRTL ? 'flex-row-reverse' : ''}`}>
-                  <ArrowUp className={`h-3 w-3 sm:h-4 sm:w-4 ${isRTL ? 'ml-1' : 'mr-1'}`} />
+                <div className={`flex justify-center items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                  <ArrowUp className="h-3 w-3 sm:h-4 sm:w-4" />
                   <span className="hidden sm:inline">{typeof t?.departures === 'string' ? t.departures : "Departures"}</span>
                   <span className="sm:hidden">{typeof t?.departuresShort === 'string' ? t.departuresShort : "Dep."}</span>
                 </div>
