@@ -101,9 +101,12 @@ const DashboardStats = ({ data }) => {
     : 0;
 
   // Langue la plus utilisée
-  const topLanguage = distributions.languages?.reduce((prev, current) => 
-    (prev.count > current.count) ? prev : current
-  );
+  const languagesList = distributions.languages || [];
+  const topLanguage = languagesList.length > 0
+    ? languagesList.reduce((prev, current) => 
+        (prev.count > current.count) ? prev : current
+      )
+    : null;
 
   const stats = [
     {
