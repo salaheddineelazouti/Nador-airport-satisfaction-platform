@@ -277,3 +277,7 @@
 {"level":"info","message":"⚠️  FORCE SYNC: Modèles recréés avec support Amazighe (am)","timestamp":"2025-08-11T10:51:31.135Z"}
 {"level":"info","message":"Serveur démarré sur le port 5000","timestamp":"2025-08-11T10:51:31.139Z"}
 {"level":"info","message":"Documentation API disponible sur http://localhost:5000/api-docs","timestamp":"2025-08-11T10:51:31.139Z"}
+{"level":"info","message":"Connexion à la base de données établie avec succès.","timestamp":"2025-08-13T15:01:15.413Z"}
+{"level":"info","message":"⚠️  FORCE SYNC: Modèles recréés avec support Amazighe (am)","timestamp":"2025-08-13T15:01:16.495Z"}
+{"level":"info","message":"Serveur démarré sur le port 5000","timestamp":"2025-08-13T15:01:16.560Z"}
+{"level":"info","message":"Documentation API disponible sur http://localhost:5000/api-docs","timestamp":"2025-08-13T15:01:16.563Z"}

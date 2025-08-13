@@ -355,7 +355,7 @@ export const languages = {
     evaluation: 'ⴰⵙⴰⵍⴰⵍ ⴰⵎⴰⵏ',
     globalEval: 'ⴰⵙⴰⵍⴰⵍ ⴰⵎⴰⵎⴰⵙ',
     globalSatisfaction: 'ⴰⴷⵓⵔⵉⵖⵏ ⴰⵎⴰⵜⴰⵢ ⵏ ⵓⵎⵓⵙⵙⵓ ⵏⵏⵓⵏ',
-    recommendation: 'ⴰⵔ ⴰⴷ ⵜⴰⵏⵎⴰⵍⵓⴷ ⴰⵙⴰⵎⵓⵔ ⴰ?',
+    recommendation:  'ⴰⵔ ⴰⴷ ⵜⴰⵏⵎⴰⵍⵓⴷ ⴰⵙⴰⵎⵓⵔ ⴰ?',
     comments: 'ⵜⵡⴰⵏⴳⵉⵎⵉⵏ ⵢⴰⴹⵏ ⵉ ⵓⵜⴼⴰⵔⴰⵙ ⴰ:',
     generalComments: 'ⵜⵡⴰⵏⴳⵉⵎⵉⵏ ⵉⵎⴰⵎⴰⵙⵏ ⵏⵖ ⵉⵙⵙⵓⵎⴰⵔ ⵏ ⵓⵙⵏⴼⵍ:',
     submit: 'ⴰⵣⵏ ⴰⵙⴰⵍⴰⵍ',
